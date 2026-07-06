@@ -23,12 +23,25 @@ from django.views import View
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie, csrf_exempt
 
 import base64
-import cv2
 import io
 import json
-import numpy as np
+import random
 import requests
 from PIL import Image
+
+try:
+    import cv2
+    CV2_AVAILABLE = True
+except ImportError:
+    cv2 = None
+    CV2_AVAILABLE = False
+
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except ImportError:
+    np = None
+    NUMPY_AVAILABLE = False
 
 from .models import (
     UserProfile, IncidentReport, EmailVerificationToken, PasswordResetToken,
@@ -80,7 +93,7 @@ def get_unsplash_image(query: str) -> Optional[str]:
     """
     try:
         # Use Lorem Picsum (free placeholder service) with random images
-        seed = np.random.randint(1000, 9999)
+        seed = random.randint(1000, 9999)
         return f"https://picsum.photos/150/150?random={seed}"
     except Exception as e:
         logger.debug(f"Error generating image: {e}")
@@ -100,7 +113,7 @@ def generate_placeholder_image(query: str, is_match: bool) -> str:
     """
     try:
         # Use Lorem Picsum (free placeholder service)
-        seed = np.random.randint(1000, 9999)
+        seed = random.randint(1000, 9999)
         return f"https://picsum.photos/150/150?random={seed}"
     except Exception as e:
         logger.debug(f"Error generating placeholder image: {e}")
@@ -119,7 +132,7 @@ def generate_captcha_challenge() -> dict:
         from django.core.cache import cache
         
         # Select random category
-        category = np.random.choice(list(CAPTCHA_CATEGORIES.keys()))
+        category = random.choice(list(CAPTCHA_CATEGORIES.keys()))
         category_data = CAPTCHA_CATEGORIES[category]
         
         # Generate 9 images (3x3 grid like Google)
@@ -128,12 +141,12 @@ def generate_captcha_challenge() -> dict:
         
         for idx in range(9):
             # Randomly decide if this image matches the category (50% chance)
-            is_match = np.random.choice([True, False])
+            is_match = random.choice([True, False])
             
             # Get placeholder image URL
             img_data = generate_placeholder_image(category, is_match)
             if not img_data:
-                img_data = f"https://picsum.photos/150/150?random={np.random.randint(1000, 9999)}"
+                img_data = f"https://picsum.photos/150/150?random={random.randint(1000, 9999)}"
             
             images.append(img_data)
             if is_match:
@@ -186,9 +199,13 @@ def decode_base64_image(base64_string: str) -> Optional[np.ndarray]:
         logger.debug(f"Decoded bytes length: {len(image_data)}")
         image = Image.open(io.BytesIO(image_data))
         logger.debug(f"PIL image size: {image.size}, mode: {image.mode}")
-        cv_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-        logger.debug(f"OpenCV image shape: {cv_image.shape}")
-        return cv_image
+        if CV2_AVAILABLE and NUMPY_AVAILABLE:
+            cv_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+            logger.debug(f"OpenCV image shape: {cv_image.shape}")
+            return cv_image
+        if NUMPY_AVAILABLE:
+            return np.array(image)
+        return image
     except Exception as e:
         logger.error(f"Error decoding image: {e}")
         return None
@@ -206,9 +223,14 @@ def get_face_encoding(image: np.ndarray) -> Tuple[Optional[np.ndarray], Optional
     """
     if not FACE_RECOGNITION_AVAILABLE:
         # Mock implementation - just return a dummy encoding for any valid image
-        if image is not None and image.size > 0:
-            return np.random.rand(128).astype(np.float64), None
+        if image is not None and getattr(image, 'size', 0):
+            if NUMPY_AVAILABLE:
+                return np.random.rand(128).astype(np.float64), None
+            return [random.random() for _ in range(128)], None
         return None, "Invalid image"
+
+    if not CV2_AVAILABLE or not NUMPY_AVAILABLE:
+        return None, "Face recognition libraries are not installed on this server"
 
     try:
         # Convert to RGB for face_recognition
@@ -252,6 +274,9 @@ def verify_face(known_encoding: np.ndarray, image: np.ndarray) -> Tuple[bool, Op
         # Mock implementation - always return success for demo
         logger.debug("Using mock face verification - ALWAYS SUCCESS")
         return True, None
+
+    if not CV2_AVAILABLE or not NUMPY_AVAILABLE:
+        return False, "Face recognition libraries are not installed on this server"
 
     try:
         rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
