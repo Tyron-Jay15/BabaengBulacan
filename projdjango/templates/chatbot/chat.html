@@ -1,0 +1,417 @@
+{% extends 'base.html' %}
+{% block title %}Chatbot - BabaengBulacan{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4" style="max-width: 900px; margin: 0 auto;">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-robot text-primary"></i> AI Assistant
+            </h1>
+            <p class="text-muted">Ask me anything about our services, legal information, or how to report abuse.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg">
+                <!-- Chat Container -->
+                <div class="card-body" id="chatContainer" style="height: 500px; overflow-y: auto; background-color: #f8f9fa;">
+                    <!-- Messages will be appended here -->
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-comments fa-3x mb-3"></i>
+                        <p>Hello! I'm your AI assistant. Ask me questions about:</p>
+                        <ul class="list-unstyled small">
+                            <li>📋 Reporting abuse and available support</li>
+                            <li>⚖️ Your rights and legal protections</li>
+                            <li>📍 Service locations and contact information</li>
+                            <li>🎓 Empowerment programs and counseling</li>
+                            <li>🆘 Emergency contacts and hotlines</li>
+                        </ul>
+                        <p class="mt-3">Start typing to begin!</p>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="card-footer border-top bg-white">
+                    <form id="chatForm" onsubmit="sendMessage(event)">
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                id="messageInput" 
+                                class="form-control form-control-lg border-0" 
+                                placeholder="Type your question here..." 
+                                autocomplete="off"
+                                required
+                            >
+                            <button 
+                                class="btn btn-primary btn-lg px-4" 
+                                type="submit" 
+                                id="sendBtn"
+                            >
+                                <i class="fas fa-paper-plane"></i> Send
+                            </button>
+                        </div>
+                        <small class="text-muted d-block mt-2">
+                            💡 <strong>Tip:</strong> For better responses, ask clear and specific questions.
+                        </small>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="mt-4">
+                <p class="text-muted small mb-3">Quick Questions:</p>
+                <div class="btn-group-vertical w-100" role="group">
+                    <button type="button" class="btn btn-outline-secondary text-start py-2 px-3" onclick="quickQuestion('How do I report abuse?')">
+                        <i class="fas fa-exclamation-circle text-danger me-2"></i> How do I report abuse?
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary text-start py-2 px-3" onclick="quickQuestion('What is Republic Act 9262?')">
+                        <i class="fas fa-book text-info me-2"></i> What is Republic Act 9262?
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary text-start py-2 px-3" onclick="quickQuestion('Where can I find safe houses?')">
+                        <i class="fas fa-home text-success me-2"></i> Where can I find safe houses?
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary text-start py-2 px-3" onclick="quickQuestion('What is the emergency hotline number?')">
+                        <i class="fas fa-phone text-warning me-2"></i> What is the emergency hotline number?
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chat Styles -->
+<style>
+    .message {
+        margin-bottom: 15px;
+        animation: slideIn 0.3s ease-in-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .user-message {
+        text-align: right;
+    }
+
+    .user-message .message-content {
+        background-color: #007bff;
+        color: white;
+        border-radius: 18px 18px 0 18px;
+        padding: 10px 16px;
+        display: inline-block;
+        max-width: 70%;
+        word-wrap: break-word;
+    }
+
+    .bot-message .message-content {
+        background-color: #e9ecef;
+        color: #333;
+        border-radius: 18px 18px 18px 0;
+        padding: 10px 16px;
+        display: inline-block;
+        max-width: 70%;
+        word-wrap: break-word;
+    }
+
+    .bot-message .confidence {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+
+    .message-time {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+
+    #chatContainer::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #chatContainer::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    #chatContainer::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+
+    #chatContainer::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    .btn-group-vertical .btn {
+        border-radius: 8px;
+        margin-bottom: 10px;
+        text-align: left;
+        font-size: 0.95rem;
+    }
+
+    .btn-group-vertical .btn:hover {
+        background-color: #f0f0f0;
+    }
+
+    .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .typing-indicator span {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #007bff;
+        animation: typing 1.4s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+        0%, 60%, 100% {
+            opacity: 0.3;
+            transform: translateY(0);
+        }
+        30% {
+            opacity: 1;
+            transform: translateY(-10px);
+        }
+    }
+
+    .alert-emergency {
+        background-color: #fff3cd;
+        border-color: #ffc107;
+        color: #856404;
+    }
+
+    .alert-emergency strong {
+        color: #d32f2f;
+    }
+</style>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Global variables
+let sessionId = localStorage.getItem('chatSessionId') || generateSessionId();
+localStorage.setItem('chatSessionId', sessionId);
+let isWaitingForResponse = false;
+
+// Generate session ID
+function generateSessionId() {
+    return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+// Send message
+function sendMessage(event) {
+    event.preventDefault();
+    
+    const messageInput = document.getElementById('messageInput');
+    const message = messageInput.value.trim();
+    
+    if (!message || isWaitingForResponse) return;
+    
+    // Disable input
+    isWaitingForResponse = true;
+    messageInput.disabled = true;
+    document.getElementById('sendBtn').disabled = true;
+    
+    // Add user message to chat
+    addMessageToChat(message, 'user');
+    messageInput.value = '';
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    // Send to API
+    fetch('/api/chatbot/message/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            message: message,
+            session_id: sessionId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        removeTypingIndicator();
+        
+        if (data.success) {
+            addMessageToChat(data.response, 'bot', {
+                confidence: data.confidence,
+                intent: data.intent
+            });
+            
+            // Show alert for emergency intent
+            if (data.intent === 'emergency') {
+                showEmergencyAlert();
+            }
+        } else {
+            addMessageToChat(data.error || 'An error occurred. Please try again.', 'bot');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        removeTypingIndicator();
+        addMessageToChat('Error connecting to chatbot. Please try again.', 'bot');
+    })
+    .finally(() => {
+        // Re-enable input
+        isWaitingForResponse = false;
+        messageInput.disabled = false;
+        document.getElementById('sendBtn').disabled = false;
+        messageInput.focus();
+    });
+}
+
+// Add message to chat
+function addMessageToChat(content, sender, metadata = {}) {
+    const chatContainer = document.getElementById('chatContainer');
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}-message`;
+    
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'message-content';
+    
+    // For bot messages, render markdown-like formatting
+    if (sender === 'bot') {
+        // Convert markdown bold and italics
+        let formattedContent = content
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/_(.*?)_/g, '<em>$1</em>')
+            .replace(/\n/g, '<br>');
+        
+        contentDiv.innerHTML = formattedContent;
+    } else {
+        contentDiv.textContent = content;
+    }
+    
+    messageDiv.appendChild(contentDiv);
+    
+    // Add time
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'message-time';
+    timeDiv.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    messageDiv.appendChild(timeDiv);
+    
+    // Add confidence indicator for bot messages
+    if (sender === 'bot' && metadata.confidence) {
+        const confidenceDiv = document.createElement('div');
+        confidenceDiv.className = 'confidence';
+        const confidence = Math.round(metadata.confidence * 100);
+        if (confidence < 50) {
+            confidenceDiv.innerHTML = `<i class="fas fa-exclamation-triangle text-warning"></i> Low confidence match (${confidence}%)`;
+        } else if (confidence < 70) {
+            confidenceDiv.innerHTML = `<i class="fas fa-info-circle text-info"></i> Moderate match (${confidence}%)`;
+        }
+        messageDiv.appendChild(confidenceDiv);
+    }
+    
+    chatContainer.appendChild(messageDiv);
+    
+    // Clear default message if first message
+    if (chatContainer.querySelector('.text-muted')) {
+        chatContainer.innerHTML = '';
+        chatContainer.appendChild(messageDiv);
+    }
+    
+    // Scroll to bottom
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// Typing indicator
+function showTypingIndicator() {
+    const chatContainer = document.getElementById('chatContainer');
+    const indicatorDiv = document.createElement('div');
+    indicatorDiv.className = 'message bot-message';
+    indicatorDiv.id = 'typingIndicator';
+    
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'message-content typing-indicator';
+    contentDiv.innerHTML = '<span></span><span></span><span></span>';
+    
+    indicatorDiv.appendChild(contentDiv);
+    chatContainer.appendChild(indicatorDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+function removeTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+// Emergency alert
+function showEmergencyAlert() {
+    const chatContainer = document.getElementById('chatContainer');
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-emergency alert-dismissible fade show mt-3';
+    alertDiv.role = 'alert';
+    alertDiv.innerHTML = `
+        <strong><i class="fas fa-exclamation-circle"></i> EMERGENCY:</strong> If you need immediate help, call <strong>999-8888</strong> or <strong>911</strong> right now!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    chatContainer.appendChild(alertDiv);
+}
+
+// Quick question button
+function quickQuestion(question) {
+    document.getElementById('messageInput').value = question;
+    document.getElementById('messageInput').focus();
+    sendMessage({ preventDefault: () => {} });
+}
+
+// Get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Focus on input when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('messageInput').focus();
+});
+
+// Allow Enter key to send message
+document.getElementById('messageInput').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage({ preventDefault: () => {} });
+    }
+});
+</script>
+{% endblock %}

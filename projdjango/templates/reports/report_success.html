@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Report Submitted - BabaengBulacan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow">
+                <div class="card-body text-center p-5">
+                    <i class="fas fa-check-circle fa-4x text-success mb-4"></i>
+                    <h2 class="card-title mb-3">Report Submitted Successfully</h2>
+                    <p class="card-text mb-4">
+                        Thank you for your courage in reporting this incident. Your report has been submitted
+                        and will be handled confidentially by our trained professionals.
+                    </p>
+
+                    <div class="alert alert-info">
+                        <h6>Your Case Number:</h6>
+                        <h4 class="text-primary">BB-2024-00001</h4>
+                        <small class="text-muted">Please save this number for tracking your case</small>
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="{% url 'track_case' %}" class="btn btn-primary me-3">
+                            <i class="fas fa-search me-2"></i>Track Your Case
+                        </a>
+                        <a href="{% url 'home' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-home me-2"></i>Return Home
+                        </a>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="text-start">
+                        <h6>What happens next?</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Your report will be reviewed within 24 hours</li>
+                            <li><i class="fas fa-check text-success me-2"></i>You will receive updates via SMS/email</li>
+                            <li><i class="fas fa-check text-success me-2"></i>A case worker will be assigned to assist you</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Follow-up support services will be offered</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

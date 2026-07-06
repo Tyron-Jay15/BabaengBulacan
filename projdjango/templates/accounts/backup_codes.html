@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Backup Recovery Codes - BabaengBulacan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        {% if just_enabled %}
+                        <i class="fas fa-circle-check fa-3x text-success mb-3"></i>
+                        <h3>Two-Factor Authentication Enabled</h3>
+                        {% else %}
+                        <i class="fas fa-rotate fa-3x text-primary mb-3"></i>
+                        <h3>New Backup Codes</h3>
+                        {% endif %}
+                        <p class="text-muted">Save these backup recovery codes somewhere safe.</p>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-triangle-exclamation me-2"></i>
+                        Each code can be used <strong>once</strong> if you lose access to your authenticator app.
+                        These codes are shown <strong>only now</strong>.
+                    </div>
+
+                    <div class="row row-cols-2 g-2 my-3">
+                        {% for code in codes %}
+                        <div class="col">
+                            <div class="border rounded text-center py-2 bg-light user-select-all" style="font-family:monospace; letter-spacing:1px;">
+                                {{ code }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'backup_codes_download' %}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-download me-2"></i>Download
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary w-100" id="copyCodes">
+                            <i class="fas fa-copy me-2"></i>Copy
+                        </button>
+                    </div>
+
+                    <a href="{% url 'profile' %}" class="btn btn-primary w-100 mt-3">
+                        <i class="fas fa-check me-2"></i>I've saved my codes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('copyCodes').addEventListener('click', function() {
+    const codes = [{% for code in codes %}'{{ code }}'{% if not forloop.last %},{% endif %}{% endfor %}].join('\n');
+    navigator.clipboard.writeText(codes).then(function() {
+        Swal.fire({ icon: 'success', title: 'Copied!', text: 'Backup codes copied to clipboard.', timer: 1500, showConfirmButton: false });
+    });
+});
+</script>
+{% endblock %}

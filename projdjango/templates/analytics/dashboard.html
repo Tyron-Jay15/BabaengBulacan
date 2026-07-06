@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% block title %}Analytics Dashboard - BabaengBulacan{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4">Analytics Dashboard</h2>
+
+    <!-- Date Range Filter -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <label class="form-label">Date Range</label>
+            <div class="input-group">
+                <input type="date" class="form-control" id="start-date">
+                <span class="input-group-text">to</span>
+                <input type="date" class="form-control" id="end-date">
+                <button class="btn btn-outline-primary" onclick="updateCharts()">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card stat-primary">
+                <div class="card-body">
+                    <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                    <h3 class="stat-number">1,247</h3>
+                    <p class="stat-label">Total Reports</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card stat-success">
+                <div class="card-body">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <h3 class="stat-number">892</h3>
+                    <p class="stat-label">Resolved Cases</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card stat-warning">
+                <div class="card-body">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <h3 class="stat-number">456</h3>
+                    <p class="stat-label">Active Programs</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card stat-info">
+                <div class="card-body">
+                    <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <h3 class="stat-number">1,203</h3>
+                    <p class="stat-label">Program Graduates</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Reports by Incident Type</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="incidentTypeChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Reports by Municipality</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="municipalityChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trends Chart -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Monthly Report Trends</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="trendsChart" width="800" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Options -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Export Data</h5>
+                </div>
+                <div class="card-body">
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-outline-primary" onclick="exportData('pdf')">
+                            <i class="fas fa-file-pdf me-2"></i>Export PDF
+                        </button>
+                        <button class="btn btn-outline-success" onclick="exportData('excel')">
+                            <i class="fas fa-file-excel me-2"></i>Export Excel
+                        </button>
+                        <button class="btn btn-outline-info" onclick="exportData('csv')">
+                            <i class="fas fa-file-csv me-2"></i>Export CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+<script>
+// Initialize charts when page loads
+$(document).ready(function() {
+    initializeCharts();
+});
+
+function initializeCharts() {
+    // Incident Type Pie Chart
+    const incidentCtx = document.getElementById('incidentTypeChart').getContext('2d');
+    new Chart(incidentCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Physical Violence', 'Emotional Violence', 'Sexual Violence', 'Economic Abuse'],
+            datasets: [{
+                data: [45, 30, 15, 10],
+                backgroundColor: [
+                    '#dc3545',
+                    '#ffc107',
+                    '#6f42c1',
+                    '#17a2b8'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Municipality Bar Chart
+    const municipalityCtx = document.getElementById('municipalityChart').getContext('2d');
+    new Chart(municipalityCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Malolos', 'Meycauayan', 'San Jose del Monte', 'Bocaue', 'Balagtas'],
+            datasets: [{
+                label: 'Number of Reports',
+                data: [250, 180, 150, 120, 95],
+                backgroundColor: '#7B2CBF'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Trends Line Chart
+    const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+    new Chart(trendsCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Reports',
+                data: [65, 78, 90, 81, 95, 102],
+                borderColor: '#7B2CBF',
+                backgroundColor: 'rgba(123, 44, 191, 0.1)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function updateCharts() {
+    const startDate = $('#start-date').val();
+    const endDate = $('#end-date').val();
+
+    if (!startDate || !endDate) {
+        alert('Please select both start and end dates');
+        return;
+    }
+
+    // Placeholder for updating charts with new date range
+    console.log('Updating charts for date range:', startDate, 'to', endDate);
+    // In a real implementation, this would fetch new data and update the charts
+}
+
+function exportData(format) {
+    // Placeholder for export functionality
+    alert(`Exporting data as ${format.toUpperCase()}...`);
+    // In a real implementation, this would trigger a download
+}
+</script>
+{% endblock %}

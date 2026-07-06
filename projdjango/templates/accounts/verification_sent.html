@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Account Pending Approval - BabaengBulacan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card border-0 shadow">
+                <div class="card-body p-4 text-center">
+                    {% if admin_verification %}
+                    <i class="fas fa-user-clock fa-3x text-warning mb-3"></i>
+                    <h3>Account pending approval</h3>
+                    {% if message %}
+                        <p class="text-muted">{{ message }}</p>
+                    {% else %}
+                        <p class="text-muted">
+                            Registration received for <strong>{{ email }}</strong>.
+                            An administrator will review your account and registered face photo before you can sign in.
+                        </p>
+                    {% endif %}
+                    <div class="alert alert-warning text-start mt-3">
+                        <h6 class="alert-heading"><i class="fas fa-shield-alt me-2"></i>What happens next?</h6>
+                        <ul class="small mb-0 ps-3">
+                            <li>A staff member checks your registration in the Admin Dashboard.</li>
+                            <li>They review your profile and face photo to filter spam accounts.</li>
+                            <li>Once approved, you can sign in with your email and password.</li>
+                        </ul>
+                    </div>
+                    <div class="alert alert-light border text-start mt-3">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        You do not need to verify via email. Approval is handled securely by an administrator.
+                    </div>
+                    {% else %}
+                    <i class="fas fa-envelope-open-text fa-3x text-primary mb-3"></i>
+                    <h3>{% if show_on_page_link %}Verify your account{% else %}Check your inbox{% endif %}</h3>
+                    {% if message %}
+                        <p class="text-muted">{{ message }}</p>
+                    {% elif show_on_page_link and not smtp_configured %}
+                        <p class="text-muted">
+                            Account created for <strong>{{ email }}</strong>.
+                            Email delivery is not configured on this server, so use the verification button below.
+                        </p>
+                    {% else %}
+                        <p class="text-muted">
+                            We've sent a verification link to
+                            {% if email %}<strong>{{ email }}</strong>{% else %}your email address{% endif %}.
+                            Please click the link in that email to activate your account.
+                        </p>
+                    {% endif %}
+
+                    {% if show_on_page_link %}
+                    <div class="alert alert-primary text-start mt-3">
+                        <h6 class="alert-heading"><i class="fas fa-link me-2"></i>Verify now</h6>
+                        {% if not smtp_configured %}
+                        <p class="small mb-3">No SMTP is set up — use the button below to activate your account:</p>
+                        {% elif email_sent == False %}
+                        <p class="small mb-3">We could not deliver email to <strong>{{ email }}</strong>. Use this link instead:</p>
+                        {% endif %}
+                        <a href="{{ verify_link }}" class="btn btn-primary w-100 text-break mb-2">
+                            <i class="fas fa-check-circle me-2"></i>Verify my email
+                        </a>
+                        <code class="small d-block text-break user-select-all p-2 bg-white rounded border">{{ verify_link }}</code>
+                    </div>
+                    {% elif email_sent %}
+                    <div class="alert alert-success text-start mt-3">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Verification email sent to <strong>{{ email }}</strong>.
+                    </div>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'resend_verification' %}" class="mt-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="email" value="{{ email }}">
+                        <button type="submit" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-paper-plane me-2"></i>Resend verification email
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    <div class="mt-3">
+                        <a href="{% url 'login' %}" class="text-decoration-none">Back to login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

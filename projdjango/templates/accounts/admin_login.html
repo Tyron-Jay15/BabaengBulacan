@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Staff Login - BabaengBulacan{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/login-mobile.css' %}" rel="stylesheet">
+<style>
+.admin-login-card { border-top: 4px solid #7B2CBF; }
+.admin-login-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #7B2CBF;
+    background: #f5f0fb;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow admin-login-card">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <span class="admin-login-badge">Staff portal</span>
+                        <i class="fas fa-user-shield fa-3x text-primary mb-3 d-block"></i>
+                        <h3>Administrator Sign In</h3>
+                        <p class="text-muted small mb-0">For authorized staff and superusers only.</p>
+                    </div>
+
+                    {% if error %}
+                    <div class="alert alert-danger" role="alert">
+                        <strong>Login failed</strong><br>{{ error }}
+                    </div>
+                    {% endif %}
+
+                    {% if request.GET.message %}
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>{{ request.GET.message }}
+                    </div>
+                    {% endif %}
+
+                    <form method="post" id="adminLoginForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Staff email</label>
+                            <input type="email" class="form-control form-control-lg" id="email" name="email"
+                                   value="{{ email|default:'' }}" required autocomplete="username" inputmode="email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control form-control-lg" id="password" name="password"
+                                   required autocomplete="current-password">
+                        </div>
+
+                        {% if RECAPTCHA_SHOW %}
+                        <div class="mb-3 recaptcha-mobile-wrap">
+                            <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_SITE_KEY }}"></div>
+                        </div>
+                        {% endif %}
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                            <i class="fas fa-sign-in-alt me-2"></i>Sign in to dashboard
+                        </button>
+                    </form>
+
+                    <div class="text-center">
+                        <a href="{% url 'forgot_password' %}" class="text-decoration-none small">Forgot password?</a>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <p class="text-center text-muted small mb-0">
+                        Resident or public user?
+                        <a href="{% url 'login' %}" class="text-decoration-none">Use the public login page</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if RECAPTCHA_SHOW %}
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+{% endif %}
+{% endblock %}

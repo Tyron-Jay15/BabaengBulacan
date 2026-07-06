@@ -1,0 +1,89 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+            <img src="{% static 'images/bulacan-logo.png' %}" alt="Lungsod ng Bulacan Logo" class="navbar-logo me-2">
+            <div class="d-flex flex-column">
+                <span class="navbar-brand-text">BabaengBulacan</span>
+                <small class="navbar-brand-subtitle">Women Empowerment Platform</small>
+            </div>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'home' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'about' %}">About</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Services
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'incident_report' %}">Report Incident</a></li>
+                        <li><a class="dropdown-item" href="{% url 'track_case' %}">Track Case</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'programs' %}">Programs</a></li>
+                        <li><a class="dropdown-item" href="{% url 'resources' %}">Resources</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav">
+                <li class="nav-item d-lg-none pwa-install-control" hidden>
+                    <button type="button"
+                            class="btn btn-outline-light btn-sm pwa-nav-install-btn ms-1 me-1"
+                            data-pwa-install
+                            aria-label="Install BabaengBulacan">
+                        <i class="fas fa-download me-1"></i>
+                        <span class="d-none d-sm-inline">Install App</span>
+                    </button>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>{{ user.get_full_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% if user.is_staff %}
+                            <li><a class="dropdown-item" href="{% url 'admin_dashboard' %}"><i class="fas fa-tachometer-alt me-1"></i>Admin Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{% url 'admin_backend' %}"><i class="fas fa-database me-1"></i>Django Backend</a></li>
+                            <li><a class="dropdown-item" href="{% url 'admin:index' %}" target="_blank" rel="noopener"><i class="fas fa-cogs me-1"></i>Django Admin</a></li>
+                            <li><a class="dropdown-item" href="{% url 'search_hub' %}"><i class="fas fa-search me-1"></i>Search &amp; Filter</a></li>
+                            {% else %}
+                            <li><a class="dropdown-item" href="{% url 'user_dashboard' %}"><i class="fas fa-tachometer-alt me-1"></i>My Dashboard</a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'search_announcements' %}">Announcements</a></li>
+                            {% if not user.is_staff %}
+                            <li><a class="dropdown-item" href="{% url 'search_notifications' %}">Notifications</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item navbar-auth-actions">
+                        <div class="navbar-auth-stack">
+                            <a class="btn btn-primary navbar-btn-login" href="{% url 'login' %}">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            </a>
+                            <a class="btn btn-outline-primary navbar-btn-register" href="{% url 'register' %}">
+                                <i class="fas fa-user-plus me-2"></i>Register
+                            </a>
+                        </div>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

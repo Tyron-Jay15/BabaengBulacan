@@ -1,0 +1,60 @@
+{% load static %}
+<nav class="admin-subnav" aria-label="Administrator navigation">
+    <div class="container-xl">
+        <div class="admin-subnav-inner">
+            <ul class="admin-subnav-list">
+                <li>
+                    <a href="{% url 'admin_dashboard' %}"
+                       class="admin-subnav-link{% if request.resolver_match.url_name == 'admin_dashboard' %} active{% endif %}">
+                        <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'admin_analytics' %}"
+                       class="admin-subnav-link{% if request.resolver_match.url_name == 'admin_analytics' %} active{% endif %}">
+                        <i class="fas fa-chart-bar"></i><span>Analytics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'admin_activity_logs' %}"
+                       class="admin-subnav-link{% if request.resolver_match.url_name == 'admin_activity_logs' %} active{% endif %}">
+                        <i class="fas fa-clipboard-list"></i><span>Activity Logs</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'admin_officer_workload' %}"
+                       class="admin-subnav-link{% if request.resolver_match.url_name == 'admin_officer_workload' %} active{% endif %}">
+                        <i class="fas fa-user-shield"></i><span>Officers</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'search_hub' %}"
+                       class="admin-subnav-link{% if request.resolver_match.url_name == 'search_hub' %} active{% endif %}">
+                        <i class="fas fa-search"></i><span>Search</span>
+                    </a>
+                </li>
+            </ul>
+            <ul class="admin-subnav-list admin-subnav-backend">
+                <li class="admin-subnav-divider" aria-hidden="true"></li>
+                <li>
+                    <a href="{% url 'admin_backend' %}"
+                       class="admin-subnav-link admin-subnav-link-backend{% if request.resolver_match.url_name == 'admin_backend' %} active{% endif %}">
+                        <i class="fas fa-database"></i><span>Django Backend</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'security_dashboard' %}"
+                       class="admin-subnav-link{% if request.resolver_match.url_name == 'security_dashboard' %} active{% endif %}">
+                        <i class="fas fa-shield-alt"></i><span>Security</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'admin:index' %}" class="admin-subnav-link admin-subnav-link-external" target="_blank" rel="noopener">
+                        <i class="fas fa-cogs"></i><span>Django Admin</span>
+                        <i class="fas fa-external-link-alt admin-subnav-ext-icon"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

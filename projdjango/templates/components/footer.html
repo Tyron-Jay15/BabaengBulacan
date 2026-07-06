@@ -1,0 +1,64 @@
+{% load static %}
+<footer class="bg-dark text-light py-5 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="d-flex align-items-center mb-3">
+                    <img src="{% static 'images/bulacan-logo.png' %}" alt="Lungsod ng Bulacan" class="footer-logo me-3">
+                    <div>
+                        <h5 class="mb-0">BabaengBulacan</h5>
+                        <small>Lungsod ng Bulacan Initiative</small>
+                    </div>
+                </div>
+                <p>Empowering women in Bulacan through safe reporting, support services, and community programs.</p>
+                <div class="social-links">
+                    <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-light me-3"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <h6>Services</h6>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'anonymous_report' %}" class="text-light require-account">Report Incident</a></li>
+                    <li><a href="{% url 'track_case' %}" class="text-light">Track Case</a></li>
+                    <li><a href="{% url 'programs' %}" class="text-light">Programs</a></li>
+                    <li><a href="{% url 'resources' %}" class="text-light">Resources</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-2">
+                <h6>Support</h6>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'faq' %}" class="text-light">FAQ</a></li>
+                    <li><a href="{% url 'contact' %}" class="text-light">Contact Us</a></li>
+                    <li><a href="{% url 'privacy' %}" class="text-light">Privacy Policy</a></li>
+                    <li><a href="{% url 'terms' %}" class="text-light">Terms of Service</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-4">
+                <h6>Emergency Hotline</h6>
+                <div class="alert alert-danger">
+                    <i class="fas fa-phone-alt me-2"></i>
+                    <strong>PNP Women's Desk:</strong> 123-4567<br>
+                    <strong>DSWD Hotline:</strong> 765-4321<br>
+                    <strong>24/7 Crisis Support:</strong> 999-8888
+                </div>
+                <small class="text-muted">Call immediately if you are in danger.</small>
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <p class="mb-0">&copy; 2026 BabaengBulacan. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-end">
+                <small class="text-muted">Powered by Django & Bootstrap</small>
+            </div>
+        </div>
+    </div>
+</footer>

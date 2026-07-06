@@ -1,0 +1,26 @@
+<div class="search-hero">
+    <div class="container-xl">
+        <div class="search-hero-inner">
+            <div class="search-hero-text">
+                {% if show_back %}
+                <a href="{% url 'search_hub' %}" class="search-breadcrumb">
+                    <i class="fas fa-arrow-left"></i> Back to Search Hub
+                </a>
+                {% endif %}
+                <h1>
+                    <span class="search-hero-icon"><i class="fas {{ icon }}"></i></span>
+                    {{ title }}
+                </h1>
+                {% if subtitle %}
+                <p class="search-hero-subtitle">{{ subtitle }}</p>
+                {% endif %}
+            </div>
+            {% if total_count != None %}
+            <span class="search-count-badge">
+                <i class="fas fa-database"></i>
+                {{ total_count }} record{{ total_count|pluralize }}
+            </span>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,18 @@
+<div class="sidebar bg-light p-3">
+    <h6>Quick Actions</h6>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"><a href="{% url 'anonymous_report' %}"><i class="fas fa-plus-circle me-2"></i>New Report</a></li>
+        <li class="list-group-item"><a href="{% url 'track_case' %}"><i class="fas fa-search me-2"></i>Track Case</a></li>
+        <li class="list-group-item"><a href="{% url 'programs' %}"><i class="fas fa-graduation-cap me-2"></i>Programs</a></li>
+        <li class="list-group-item"><a href="{% url 'resources' %}"><i class="fas fa-book me-2"></i>Resources</a></li>
+    </ul>
+
+    {% if user.is_authenticated %}
+        <h6 class="mt-4">My Account</h6>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><a href="{% if user.is_staff %}{% url 'admin_dashboard' %}{% else %}{% url 'user_dashboard' %}{% endif %}"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+            <li class="list-group-item"><a href="{% url 'my_reports' %}"><i class="fas fa-file-alt me-2"></i>My Reports</a></li>
+            <li class="list-group-item"><a href="{% url 'my_enrollments' %}"><i class="fas fa-user-graduate me-2"></i>My Programs</a></li>
+        </ul>
+    {% endif %}
+</div>

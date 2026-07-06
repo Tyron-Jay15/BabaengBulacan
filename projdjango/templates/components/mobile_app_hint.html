@@ -1,0 +1,37 @@
+{% comment %}
+Optional mobile hint — responsive site + PWA install (no QR code).
+{% endcomment %}
+<section class="mobile-app-hint" aria-label="Use on mobile">
+    <div class="mobile-app-hint-card">
+        <div class="mobile-app-hint-header">
+            <i class="fas fa-mobile-screen-button mobile-app-hint-icon" aria-hidden="true"></i>
+            <div>
+                <h2 class="mobile-app-hint-title">{{ title|default:"Works on your phone" }}</h2>
+                <p class="mobile-app-hint-subtitle">
+                    {{ subtitle|default:"Open this site in your phone browser — layout adapts automatically. Install the app for quick access." }}
+                </p>
+            </div>
+        </div>
+
+        {% if MOBILE_NETWORK_WARNING and not MOBILE_IS_PRODUCTION %}
+        <div class="mobile-app-hint-warning" role="alert">
+            <i class="fas fa-wifi me-1"></i>
+            {{ MOBILE_NETWORK_WARNING }}
+            {% if not MOBILE_IS_PRODUCTION %}
+            <code>python manage.py runserver 0.0.0.0:8000</code>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if not MOBILE_IS_PRODUCTION and MOBILE_LOCAL_IP %}
+        <p class="mobile-app-hint-url-label">On the same Wi-Fi, open on your phone:</p>
+        <a href="{{ SITE_BASE_URL }}/" class="mobile-app-hint-url">{{ SITE_BASE_URL }}/</a>
+        {% endif %}
+
+        {% if show_pwa_hint %}
+        <button type="button" class="btn btn-primary mobile-app-install-btn w-100 mt-3" data-pwa-install hidden>
+            <i class="fas fa-download me-2"></i>Install app on this device
+        </button>
+        {% endif %}
+    </div>
+</section>

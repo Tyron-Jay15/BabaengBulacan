@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% block title %}My Profile - BabaengBulacan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">My Profile</h2>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Name: <strong>{{ user.first_name }} {{ user.last_name }}</strong></li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Email: <strong>{{ user.email }}</strong></span>
+                            {% if profile.email_verified %}
+                                <span class="badge bg-success"><i class="fas fa-check me-1"></i>Verified</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Unverified</span>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item">Role: <strong>{% if user.is_staff %}Administrator{% else %}Community Member{% endif %}</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ===================== Security Center ===================== -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title"><i class="fas fa-shield-halved text-primary me-2"></i>Security</h4>
+
+                    <!-- Two-Factor Authentication -->
+                    <div class="d-flex justify-content-between align-items-start border rounded p-3 mb-3">
+                        <div>
+                            <h6 class="mb-1">Two-Factor Authentication (2FA)
+                                {% if two_factor_enabled %}
+                                    <span class="badge bg-success ms-1">Enabled</span>
+                                {% else %}
+                                    <span class="badge bg-secondary ms-1">Disabled</span>
+                                {% endif %}
+                            </h6>
+                            <p class="text-muted small mb-0">Protect your account with a time-based code from your authenticator app.</p>
+                            {% if two_factor_enabled %}
+                            <p class="text-muted small mb-0 mt-1">Backup codes remaining: <strong>{{ backup_codes_remaining }}</strong></p>
+                            {% endif %}
+                        </div>
+                        <div class="text-end" style="min-width:130px;">
+                            {% if two_factor_enabled %}
+                                <form method="post" action="{% url 'backup_codes_regenerate' %}" class="mb-2">
+                                    {% csrf_token %}
+                                    <button class="btn btn-sm btn-outline-secondary w-100">Regenerate codes</button>
+                                </form>
+                                <button type="button" class="btn btn-sm btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#disable2faModal">Disable 2FA</button>
+                            {% else %}
+                                <a href="{% url 'two_factor_setup' %}" class="btn btn-sm btn-primary">Enable 2FA</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================== Recent Login Activity ===================== -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title"><i class="fas fa-clock-rotate-left text-primary me-2"></i>Recent Login Activity</h4>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead>
+                                <tr><th>When</th><th>Event</th><th>Method</th><th>IP</th><th class="d-none d-md-table-cell">Device</th></tr>
+                            </thead>
+                            <tbody>
+                            {% for log in recent_logins %}
+                                <tr>
+                                    <td class="small">{{ log.created_at|date:"M j, H:i" }}</td>
+                                    <td>
+                                        {% if log.success %}
+                                            <span class="text-success">{{ log.get_event_type_display }}</span>
+                                        {% else %}
+                                            <span class="text-danger">{{ log.get_event_type_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="small">{{ log.auth_method|default:"—" }}</td>
+                                    <td class="small">{{ log.ip_address|default:"—" }}</td>
+                                    <td class="small d-none d-md-table-cell">{{ log.browser }} / {{ log.os }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr><td colspan="5" class="text-muted text-center py-3">No login activity recorded yet.</td></tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if known_devices %}
+                    <h6 class="mt-4">Recognized devices</h6>
+                    <ul class="list-group list-group-flush">
+                        {% for d in known_devices %}
+                        <li class="list-group-item d-flex justify-content-between small">
+                            <span><i class="fas fa-laptop me-2 text-muted"></i>{{ d.label }}</span>
+                            <span class="text-muted">last seen {{ d.last_seen|date:"M j, H:i" }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="mt-3">
+                        <a href="{% url 'logout' %}" class="btn btn-danger me-2">Logout</a>
+                        {% if user.is_staff %}
+                        <a href="{% url 'admin_dashboard' %}" class="btn btn-primary">Go to Admin Dashboard</a>
+                        {% else %}
+                        <a href="{% url 'user_dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if two_factor_enabled %}
+<!-- Disable 2FA confirmation modal -->
+<div class="modal fade" id="disable2faModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'two_factor_disable' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Disable Two-Factor Authentication</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">For your security, please confirm your password to disable 2FA. This will also delete your backup codes.</p>
+                    <input type="password" class="form-control" name="password" placeholder="Current password" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Disable 2FA</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'emails/base_email.html' %}
+{% block subject %}New sign-in to your {{ site_name }} account{% endblock %}
+{% block preheader %}We noticed a sign-in from a new device or browser.{% endblock %}
+{% block content %}
+<h1 style="margin:0 0 14px 0; font-size:21px; color:#3d3457;">New device sign-in 📱</h1>
+<p style="margin:0 0 14px 0;">Your {{ site_name }} account was just accessed from a device or browser we haven't seen before.</p>
+
+{% include 'emails/_meta.html' %}
+
+<p style="margin:0 0 14px 0;">If this was you, no action is needed.</p>
+<p style="margin:0;"><strong>If this wasn't you</strong>, please reset your password right away and review your recent login activity.</p>
+
+{% include 'emails/_button.html' with url=profile_link label="Review my account activity" %}
+{% endblock %}

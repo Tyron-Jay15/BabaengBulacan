@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Login - BabaengBulacan{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/login-mobile.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-md-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card border-0 shadow">
+                <div class="card-body p-3 p-md-4">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                        <h3>Login</h3>
+                        <p class="text-muted small">Sign in with your email and face verification.</p>
+                    </div>
+
+                    {% if error %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Login Failed</strong><br>{{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+
+                    {% if admin_login_hint %}
+                    <div class="alert alert-warning mb-3">
+                        <i class="fas fa-user-shield me-2"></i>
+                        Staff accounts must sign in at the
+                        <a href="{% url 'admin_login' %}" class="alert-link">administrator login page</a>.
+                    </div>
+                    {% endif %}
+
+                    {% if pending_admin %}
+                    <div class="alert alert-warning mb-3">
+                        <i class="fas fa-user-clock me-2"></i>
+                        Your account is waiting for administrator approval. Check back after an admin has reviewed your registration.
+                    </div>
+                    {% elif show_resend %}
+                    <form method="post" action="{% url 'resend_verification' %}" class="mb-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="email" value="{{ email }}">
+                        <button type="submit" class="btn btn-sm btn-outline-primary w-100">
+                            <i class="fas fa-paper-plane me-2"></i>Resend verification email
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    {% if request.GET.message %}
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>{{ request.GET.message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+
+                    {% if IS_MOBILE_LAN_DEV %}
+                    <div class="alert alert-info small py-2 mb-3">
+                        <i class="fas fa-mobile-alt me-1"></i>
+                        <strong>Mobile Wi-Fi mode:</strong> reCAPTCHA is skipped on your phone’s LAN link.
+                        Use <strong>Login without face</strong> if the camera is blocked (HTTP).
+                    </div>
+                    {% endif %}
+
+                    <form method="post" id="loginForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control form-control-lg" id="email" name="email" required autocomplete="email" inputmode="email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control form-control-lg" id="password" name="password" required autocomplete="current-password">
+                        </div>
+
+                        {% if RECAPTCHA_SHOW %}
+                        <div class="mb-3 recaptcha-mobile-wrap" id="recaptcha-wrap">
+                            <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_SITE_KEY }}" data-size="normal"></div>
+                        </div>
+                        {% endif %}
+
+                        <div class="mb-3 p-3 bg-light border rounded face-verify-box" id="faceVerifySection">
+                            <label class="form-label fw-bold">Face Verification</label>
+                            <p class="text-muted small mb-2" id="camera-help-text">
+                                Tap Start Camera for face login. Requires HTTPS on mobile browsers.
+                            </p>
+                            <div id="camera-insecure-note" class="alert alert-warning small py-2 d-none mb-2">
+                                <i class="fas fa-lock me-1"></i>
+                                Camera is blocked on <code>http://</code> Wi-Fi links. Use the button below to log in with email and password only.
+                            </div>
+
+                            <div class="text-center mb-2 face-video-wrap">
+                                <video id="video" class="face-video border rounded d-none" autoplay muted playsinline webkit-playsinline></video>
+                                <canvas id="canvas" class="d-none"></canvas>
+                                <div id="no-camera" class="alert alert-warning small d-none mb-0"></div>
+                            </div>
+
+                            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-2">
+                                <button type="button" class="btn btn-outline-primary" id="startCamera">
+                                    <i class="fas fa-camera me-2"></i>Start Camera
+                                </button>
+                                <button type="button" class="btn btn-success d-none" id="captureFace">
+                                    <i class="fas fa-user-check me-2"></i>Capture Face
+                                </button>
+                            </div>
+
+                            <button type="button" class="btn btn-outline-secondary w-100" id="skipFaceBtn">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login without face
+                            </button>
+
+                            <input type="hidden" id="faceImage" name="face_image">
+                            <div id="faceCaptured" class="alert alert-success small mt-2 mb-0 d-none">
+                                <i class="fas fa-check-circle me-2"></i>Face captured — you can log in now.
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                            <label class="form-check-label" for="remember">Remember me</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3" id="loginBtn">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </form>
+                    <div class="text-center">
+                        <a href="{% url 'forgot_password' %}" class="text-decoration-none">Forgot password?</a>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <p class="mb-2">Don't have an account?</p>
+                        <a href="{% url 'register' %}" class="btn btn-outline-primary w-100 w-sm-auto">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if RECAPTCHA_SHOW %}
+<script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad" async defer></script>
+{% endif %}
+<script src="{% static 'js/login-mobile.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'admin_dashboard/base.html' %}
+{% block title %}Analytics - Admin{% endblock %}
+
+{% block admin_hero %}
+<div class="admin-dash-hero">
+    <div class="container-xl">
+        <h1><i class="fas fa-chart-bar me-2"></i>Dashboard Analytics</h1>
+        <p>Incident trends, resolution rates, and geographic breakdowns.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block admin_content %}
+<div class="container-xl pb-4">
+    <div class="row g-3 mb-4">
+        <div class="col-md-4"><div class="admin-stat-card text-center"><div class="stat-value">{{ charts.total_incidents }}</div><div class="stat-label">Total Incidents</div></div></div>
+        <div class="col-md-4"><div class="admin-stat-card text-center"><div class="stat-value">{{ charts.resolution_rate }}%</div><div class="stat-label">Resolution Rate</div></div></div>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-6"><div class="admin-section"><div class="admin-section-body"><canvas id="typeChart" height="220"></canvas></div></div></div>
+        <div class="col-md-6"><div class="admin-section"><div class="admin-section-body"><canvas id="statusChart" height="220"></canvas></div></div></div>
+        <div class="col-md-6"><div class="admin-section"><div class="admin-section-body"><canvas id="muniChart" height="220"></canvas></div></div></div>
+        <div class="col-md-6"><div class="admin-section"><div class="admin-section-body"><canvas id="monthlyChart" height="220"></canvas></div></div></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block admin_extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const purple = '#7B2CBF';
+new Chart(document.getElementById('typeChart'), {
+    type: 'doughnut',
+    data: { labels: {{ charts.by_type_labels|safe }}, datasets: [{ data: {{ charts.by_type_data|safe }}, backgroundColor: ['#7B2CBF','#FF6B35','#17a2b8','#28a745','#ffc107'] }] },
+    options: { plugins: { title: { display: true, text: 'Incidents by Type' } } }
+});
+new Chart(document.getElementById('statusChart'), {
+    type: 'bar',
+    data: { labels: {{ charts.by_status_labels|safe }}, datasets: [{ label: 'Reports', data: {{ charts.by_status_data|safe }}, backgroundColor: purple }] },
+    options: { plugins: { title: { display: true, text: 'Incidents by Status' } }, scales: { y: { beginAtZero: true } } }
+});
+new Chart(document.getElementById('muniChart'), {
+    type: 'bar',
+    data: { labels: {{ charts.muni_labels|safe }}, datasets: [{ label: 'Reports', data: {{ charts.muni_data|safe }}, backgroundColor: '#FF6B35' }] },
+    options: { indexAxis: 'y', plugins: { title: { display: true, text: 'Top Municipalities' } } }
+});
+new Chart(document.getElementById('monthlyChart'), {
+    type: 'line',
+    data: { labels: {{ charts.monthly_labels|safe }}, datasets: [{ label: 'Reports', data: {{ charts.monthly_data|safe }}, borderColor: purple, tension: 0.3, fill: false }] },
+    options: { plugins: { title: { display: true, text: 'Monthly Trend' } } }
+});
+</script>
+{% endblock %}

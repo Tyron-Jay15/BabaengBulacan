@@ -1,0 +1,23 @@
+# Core
+Django==6.0.3
+python-dotenv==1.2.2
+requests==2.33.1
+
+# Authentication & security
+pyotp==2.10.0
+cryptography==49.0.0
+qrcode==8.2
+user-agents==2.2.0
+django-recaptcha==4.1.0
+
+# Django REST Framework
+djangorestframework>=3.15.0
+django-filter>=25.0
+Pillow==11.3.0
+
+# MySQL on PythonAnywhere (install after creating a MySQL database in the PA dashboard)
+mysqlclient>=2.2.0
+
+# Optional — face login (large; may fail on free PythonAnywhere tier; app falls back without it)
+# opencv-python==4.13.0.92
+# numpy

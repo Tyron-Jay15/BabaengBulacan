@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us - BabaengBulacan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center mb-5">
+            <h1>Contact Us</h1>
+            <p class="lead">Get in touch with us for support and assistance</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Emergency Hotline</h5>
+                    <div class="alert alert-danger">
+                        <i class="fas fa-phone-alt me-2"></i>
+                        <strong>24/7 Crisis Support:</strong><br>
+                        <span class="h4">999-8888</span>
+                    </div>
+                    <p>Call immediately if you are in danger or need urgent assistance.</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">PNP Women's Desk</h5>
+                    <p><i class="fas fa-phone me-2"></i>123-4567</p>
+                    <p><i class="fas fa-envelope me-2"></i>pwd@bulacan.gov.ph</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i>Malolos, Bulacan</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">DSWD Office</h5>
+                    <p><i class="fas fa-phone me-2"></i>765-4321</p>
+                    <p><i class="fas fa-envelope me-2"></i>dswd@bulacan.gov.ph</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i>Meycauayan, Bulacan</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Send us a Message</h5>
+
+                    {% if success %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>{{ success }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+                    {% if error %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" id="contactForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ name|default:'' }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ email|default:'' }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="subject" name="subject" value="{{ subject|default:'' }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" required>{{ message|default:'' }}</textarea>
+                        </div>
+                        {% if RECAPTCHA_SHOW %}
+                        <div class="mb-3">
+                            <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_SITE_KEY }}"></div>
+                        </div>
+                        {% endif %}
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if RECAPTCHA_SHOW %}<script src="https://www.google.com/recaptcha/api.js" async defer></script>{% endif %}
+<script>
+const cf = document.getElementById('contactForm');
+if (cf) {
+    cf.addEventListener('submit', function(e) {
+        if (typeof grecaptcha !== 'undefined' && document.querySelector('.g-recaptcha')) {
+            if (!grecaptcha.getResponse()) {
+                e.preventDefault();
+                Swal.fire({ icon: 'warning', title: 'reCAPTCHA Required', text: 'Please complete the reCAPTCHA verification.' });
+                return false;
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

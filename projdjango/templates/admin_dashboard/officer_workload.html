@@ -1,0 +1,35 @@
+{% extends 'admin_dashboard/base.html' %}
+{% block title %}Officer Workload - Admin{% endblock %}
+
+{% block admin_hero %}
+<div class="admin-dash-hero">
+    <div class="container-xl">
+        <h1><i class="fas fa-user-shield me-2"></i>Officer Workload</h1>
+        <p>Active assignments and case counts per staff officer.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block admin_content %}
+<div class="container-xl pb-4">
+    <div class="admin-section">
+        <div class="table-responsive">
+            <table class="table admin-table mb-0">
+                <thead><tr><th>Officer</th><th>Active Assignments</th><th>Pending Cases</th><th>Under Review</th></tr></thead>
+                <tbody>
+                {% for o in officers %}
+                <tr>
+                    <td><strong>{{ o.get_full_name|default:o.username }}</strong></td>
+                    <td><span class="search-badge search-badge-primary">{{ o.active_cases }}</span></td>
+                    <td>{{ o.pending_cases }}</td>
+                    <td>{{ o.review_cases }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="text-center text-muted py-4">No staff officers found.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

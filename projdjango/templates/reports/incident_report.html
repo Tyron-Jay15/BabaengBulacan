@@ -1,0 +1,576 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Report an Incident - BabaengBulacan{% endblock %}
+
+{% block extra_css %}
+<style>
+    .incident-report-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 30px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 10px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .report-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 3px solid #e74c3c;
+    }
+
+    .report-header h1 {
+        color: #2c3e50;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    .report-header p {
+        color: #7f8c8d;
+        font-size: 1.1em;
+        margin-bottom: 10px;
+    }
+
+    .report-subtext {
+        color: #e74c3c;
+        font-weight: 600;
+        font-size: 0.95em;
+    }
+
+    .form-section {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        border-left: 5px solid #3498db;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-section-title {
+        font-size: 1.3em;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-section-icon {
+        font-size: 1.5em;
+        margin-right: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 8px;
+        font-size: 0.95em;
+    }
+
+    .form-group .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 0.95em;
+        transition: all 0.3s ease;
+        background-color: #f9f9f9;
+    }
+
+    .form-group .form-control:focus {
+        outline: none;
+        border-color: #3498db;
+        background-color: white;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .form-group .form-control::placeholder {
+        color: #bdc3c7;
+    }
+
+    .form-group textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .form-group select.form-control {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 20px;
+        padding-right: 40px;
+    }
+
+    .help-text {
+        display: block;
+        font-size: 0.85em;
+        color: #7f8c8d;
+        margin-top: 5px;
+        font-style: italic;
+    }
+
+    .required-field {
+        color: #e74c3c;
+        font-weight: bold;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-row.full {
+        grid-template-columns: 1fr;
+    }
+
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .incident-report-container {
+            margin: 20px 10px;
+            padding: 20px;
+        }
+
+        .report-header h1 {
+            font-size: 1.8em;
+        }
+    }
+
+    .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .file-input-wrapper input[type=file] {
+        position: absolute;
+        left: -9999px;
+    }
+
+    .file-input-label {
+        display: block;
+        padding: 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 2px dashed rgba(255, 255, 255, 0.3);
+    }
+
+    .file-input-label:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        border-color: rgba(255, 255, 255, 0.6);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .file-name {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #ecf0f1;
+        border-left: 3px solid #3498db;
+        border-radius: 4px;
+        color: #2c3e50;
+        font-size: 0.9em;
+    }
+
+    .form-errors {
+        background-color: #fadbd8;
+        border-left: 4px solid #e74c3c;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    .form-errors h4 {
+        color: #c0392b;
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .form-errors ul {
+        margin: 0;
+        padding-left: 20px;
+        color: #c0392b;
+    }
+
+    .form-errors li {
+        margin-bottom: 5px;
+    }
+
+    .error-message {
+        color: #e74c3c;
+        font-size: 0.85em;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .form-control.is-invalid {
+        border-color: #e74c3c;
+        background-color: #fadbd8;
+    }
+
+    .form-control.is-invalid:focus {
+        border-color: #e74c3c;
+        box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+    }
+
+    .submit-section {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 6px;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        flex: 1;
+        max-width: 300px;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .btn-secondary {
+        background: #95a5a6;
+        color: white;
+        flex: 1;
+        max-width: 300px;
+    }
+
+    .btn-secondary:hover {
+        background: #7f8c8d;
+        transform: translateY(-2px);
+    }
+
+    .privacy-notice {
+        background: #d5f4e6;
+        border-left: 4px solid #27ae60;
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 20px;
+        font-size: 0.9em;
+        color: #1e5631;
+    }
+
+    .privacy-notice strong {
+        color: #27ae60;
+    }
+
+    .success-icon {
+        color: #27ae60;
+        font-size: 1.5em;
+        margin-right: 10px;
+    }
+
+    .incident-type-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+        padding: 15px;
+        background: #ecf0f1;
+        border-radius: 6px;
+    }
+
+    .incident-type-item {
+        padding: 10px;
+        background: white;
+        border-radius: 4px;
+        border-left: 3px solid #3498db;
+    }
+
+    .incident-type-item strong {
+        color: #2c3e50;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .incident-type-item span {
+        color: #7f8c8d;
+        font-size: 0.9em;
+    }
+
+    .alert {
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
+
+    .alert-error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+    }
+
+    .alert-warning {
+        background-color: #fff3cd;
+        border: 1px solid #ffeeba;
+        color: #856404;
+    }
+
+    .contact-info {
+        background: #ecf0f1;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 15px;
+        font-size: 0.9em;
+    }
+
+    .contact-info p {
+        margin: 8px 0;
+        color: #2c3e50;
+    }
+
+    .contact-info strong {
+        color: #e74c3c;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="incident-report-container">
+    <div class="report-header">
+        <h1>⚠️ Report an Incident</h1>
+        <p>Help us protect women by reporting incidents of violence, harassment, abuse, or discrimination</p>
+        <p class="report-subtext">Your report will be kept confidential and reviewed by our team</p>
+    </div>
+
+    <!-- Display messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" class="incident-report-form">
+        {% csrf_token %}
+
+        <!-- Personal Information Section -->
+        <div class="form-section">
+            <div class="form-section-title">
+                <span class="form-section-icon">👤</span>
+                Personal Information
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.full_name.id_for_label }}">
+                        {{ form.full_name.label }}
+                    </label>
+                    {{ form.full_name }}
+                    {% if form.full_name.errors %}
+                        <span class="error-message">{{ form.full_name.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">
+                        {{ form.email.label }}
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <span class="error-message">{{ form.email.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.contact_number.id_for_label }}">
+                    {{ form.contact_number.label }}
+                </label>
+                {{ form.contact_number }}
+                {% if form.contact_number.errors %}
+                    <span class="error-message">{{ form.contact_number.errors.0 }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Incident Details Section -->
+        <div class="form-section">
+            <div class="form-section-title">
+                <span class="form-section-icon">📋</span>
+                Incident Details
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.incident_type.id_for_label }}">
+                    {{ form.incident_type.label }}
+                </label>
+                {{ form.incident_type }}
+                {% if form.incident_type.errors %}
+                    <span class="error-message">{{ form.incident_type.errors.0 }}</span>
+                {% endif %}
+                <div class="incident-type-info">
+                    <div class="incident-type-item">
+                        <strong>🔴 Violence</strong>
+                        <span>Physical harm or threat</span>
+                    </div>
+                    <div class="incident-type-item">
+                        <strong>🟡 Harassment</strong>
+                        <span>Unwanted behavior or contact</span>
+                    </div>
+                    <div class="incident-type-item">
+                        <strong>🟠 Abuse</strong>
+                        <span>Emotional or verbal mistreatment</span>
+                    </div>
+                    <div class="incident-type-item">
+                        <strong>🟣 Discrimination</strong>
+                        <span>Unfair treatment based on gender</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.incident_location.id_for_label }}">
+                    {{ form.incident_location.label }}
+                </label>
+                {{ form.incident_location }}
+                {% if form.incident_location.errors %}
+                    <span class="error-message">{{ form.incident_location.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.incident_date.id_for_label }}">
+                    {{ form.incident_date.label }}
+                </label>
+                {{ form.incident_date }}
+                {% if form.incident_date.errors %}
+                    <span class="error-message">{{ form.incident_date.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.incident_description.id_for_label }}">
+                    {{ form.incident_description.label }}
+                </label>
+                {{ form.incident_description }}
+                {% if form.incident_description.errors %}
+                    <span class="error-message">{{ form.incident_description.errors.0 }}</span>
+                {% endif %}
+                <span class="help-text">Provide as much detail as possible to help us assist you better</span>
+            </div>
+        </div>
+
+        <!-- Evidence Section -->
+        <div class="form-section">
+            <div class="form-section-title">
+                <span class="form-section-icon">📎</span>
+                Evidence (Optional)
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.evidence_file.id_for_label }}">
+                    {{ form.evidence_file.label }}
+                </label>
+                <div class="file-input-wrapper">
+                    <label for="{{ form.evidence_file.id_for_label }}" class="file-input-label">
+                        📤 Click to upload evidence (PDF, images, or video)
+                    </label>
+                    {{ form.evidence_file }}
+                </div>
+                <div id="file-name" class="file-name" style="display: none;"></div>
+                {% if form.evidence_file.errors %}
+                    <span class="error-message">{{ form.evidence_file.errors.0 }}</span>
+                {% endif %}
+                <span class="help-text">{{ form.evidence_file.help_text }}</span>
+            </div>
+        </div>
+
+        <!-- Privacy & Confidentiality Notice -->
+        <div class="privacy-notice">
+            <strong>🔒 Your Privacy Matters:</strong> Your personal information will be kept confidential and used only to process your report. 
+            We will never share your details without your consent. Your safety is our priority.
+        </div>
+
+        {% if RECAPTCHA_SHOW %}
+        <!-- CAPTCHA protection -->
+        <div class="form-section" style="display:flex; justify-content:center;">
+            <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_SITE_KEY }}"></div>
+        </div>
+        {% endif %}
+
+        <!-- Submit Buttons -->
+        <div class="submit-section">
+            <button type="reset" class="btn btn-secondary">Clear Form</button>
+            <button type="submit" class="btn btn-primary">Submit Report</button>
+        </div>
+
+        <!-- Emergency Contact -->
+        <div class="contact-info">
+            <p><strong>🚨 In case of immediate danger:</strong></p>
+            <p>Please call emergency services (911 or your local emergency number) immediately.</p>
+            <p>This form is for reporting incidents to our support team for assistance and documentation.</p>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Display file name when selected
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.querySelector('input[type="file"]');
+        const fileNameDisplay = document.getElementById('file-name');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                if (this.files.length > 0) {
+                    const fileName = this.files[0].name;
+                    const fileSize = (this.files[0].size / 1024 / 1024).toFixed(2);
+                    fileNameDisplay.textContent = `✓ Selected: ${fileName} (${fileSize} MB)`;
+                    fileNameDisplay.style.display = 'block';
+                } else {
+                    fileNameDisplay.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
+{% if RECAPTCHA_SHOW %}<script src="https://www.google.com/recaptcha/api.js" async defer></script>{% endif %}
+{% endblock %}

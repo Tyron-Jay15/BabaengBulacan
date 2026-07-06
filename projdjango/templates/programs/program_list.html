@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% block title %}Programs - BabaengBulacan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center mb-5">
+            <h1>Empowerment Programs</h1>
+            <p class="lead">Free training and development programs for women in Bulacan</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <select class="form-select" id="program-type-filter">
+                <option value="">All Program Types</option>
+                <option value="livelihood">Livelihood Training</option>
+                <option value="skills">Skills Development</option>
+                <option value="financial">Financial Literacy</option>
+                <option value="entrepreneurship">Entrepreneurship</option>
+                <option value="legal">Legal Literacy</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" id="municipality-filter">
+                <option value="">All Municipalities</option>
+                <option value="Malolos">Malolos</option>
+                <option value="Meycauayan">Meycauayan</option>
+                <option value="San Jose del Monte">San Jose del Monte</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <input type="text" class="form-control" id="search-filter" placeholder="Search programs...">
+        </div>
+    </div>
+
+    <!-- Programs Grid -->
+    <div class="row" id="programs-container">
+        <!-- Program cards will be populated here -->
+        <div class="col-md-6 col-lg-4 mb-4 program-card" data-type="livelihood" data-municipality="Malolos">
+            <div class="card h-100 program-card">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="card-title mb-0">Handicraft Making Workshop</h6>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Learn traditional Filipino handicraft making techniques and start your own business.</p>
+                    <div class="mb-2">
+                        <span class="badge bg-success enrollment-badge open">Open for Enrollment</span>
+                    </div>
+                    <small class="text-muted d-block">
+                        <i class="fas fa-calendar me-1"></i>March 25-30, 2024<br>
+                        <i class="fas fa-map-marker-alt me-1"></i>Malolos Community Center<br>
+                        <i class="fas fa-users me-1"></i>25/30 enrolled
+                    </small>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary w-100" onclick="enrollInProgram(1)">
+                        <i class="fas fa-user-plus me-2"></i>Enroll Now
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4 program-card" data-type="financial" data-municipality="Meycauayan">
+            <div class="card h-100 program-card">
+                <div class="card-header bg-success text-white">
+                    <h6 class="card-title mb-0">Financial Literacy Course</h6>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Master budgeting, saving, and basic financial planning skills.</p>
+                    <div class="mb-2">
+                        <span class="badge bg-success enrollment-badge open">Open for Enrollment</span>
+                    </div>
+                    <small class="text-muted d-block">
+                        <i class="fas fa-calendar me-1"></i>April 5-10, 2024<br>
+                        <i class="fas fa-map-marker-alt me-1"></i>Meycauayan Hall<br>
+                        <i class="fas fa-users me-1"></i>18/25 enrolled
+                    </small>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success w-100" onclick="enrollInProgram(2)">
+                        <i class="fas fa-user-plus me-2"></i>Enroll Now
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4 program-card" data-type="skills" data-municipality="San Jose del Monte">
+            <div class="card h-100 program-card">
+                <div class="card-header bg-info text-white">
+                    <h6 class="card-title mb-0">Digital Skills Training</h6>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Learn essential computer skills, online safety, and digital tools for work.</p>
+                    <div class="mb-2">
+                        <span class="badge bg-warning enrollment-badge full">Enrollment Full</span>
+                    </div>
+                    <small class="text-muted d-block">
+                        <i class="fas fa-calendar me-1"></i>April 12-17, 2024<br>
+                        <i class="fas fa-map-marker-alt me-1"></i>SJDM Tech Center<br>
+                        <i class="fas fa-users me-1"></i>30/30 enrolled
+                    </small>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-secondary w-100" disabled>
+                        <i class="fas fa-clock me-2"></i>Waitlist
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- No Results Message -->
+    <div class="text-center d-none" id="no-results">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <h5>No programs found</h5>
+        <p>Try adjusting your filters or search terms.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Filter functionality
+    $('#program-type-filter, #municipality-filter').on('change', filterPrograms);
+    $('#search-filter').on('input', filterPrograms);
+});
+
+function filterPrograms() {
+    const typeFilter = $('#program-type-filter').val().toLowerCase();
+    const municipalityFilter = $('#municipality-filter').val().toLowerCase();
+    const searchFilter = $('#search-filter').val().toLowerCase();
+
+    let visibleCount = 0;
+
+    $('.program-card').each(function() {
+        const card = $(this);
+        const type = card.data('type').toLowerCase();
+        const municipality = card.data('municipality').toLowerCase();
+        const title = card.find('.card-title').text().toLowerCase();
+        const description = card.find('.card-text').text().toLowerCase();
+
+        const typeMatch = !typeFilter || type === typeFilter;
+        const municipalityMatch = !municipalityFilter || municipality === municipalityFilter;
+        const searchMatch = !searchFilter ||
+            title.includes(searchFilter) ||
+            description.includes(searchFilter);
+
+        if (typeMatch && municipalityMatch && searchMatch) {
+            card.show();
+            visibleCount++;
+        } else {
+            card.hide();
+        }
+    });
+
+    // Show/hide no results message
+    if (visibleCount === 0) {
+        $('#no-results').removeClass('d-none');
+    } else {
+        $('#no-results').addClass('d-none');
+    }
+}
+
+function enrollInProgram(programId) {
+    // Check if user is logged in (placeholder)
+    const isLoggedIn = false; // Replace with actual authentication check
+
+    if (!isLoggedIn) {
+        Swal.fire({
+            title: 'Login Required',
+            text: 'Please log in to enroll in programs.',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Login',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '{% url "login" %}';
+            }
+        });
+        return;
+    }
+
+    // Show enrollment confirmation
+    Swal.fire({
+        title: 'Confirm Enrollment',
+        text: 'Are you sure you want to enroll in this program?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, enroll me',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Simulate enrollment (replace with actual API call)
+            Swal.fire({
+                title: 'Enrolling...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            setTimeout(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Successfully Enrolled!',
+                    text: 'You will receive a confirmation email with program details.',
+                    confirmButtonText: 'OK'
+                });
+            }, 1500);
+        }
+    });
+}
+</script>
+{% endblock %}

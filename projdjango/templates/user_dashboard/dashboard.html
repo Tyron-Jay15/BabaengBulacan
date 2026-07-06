@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}My Dashboard - BabaengBulacan{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/search.css' %}" rel="stylesheet">
+<link href="{% static 'css/admin_dashboard.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="user-dash">
+    <div class="container-xl py-4">
+        {% include 'components/alerts.html' %}
+
+        <div class="user-welcome-card">
+            <h1 class="h3 mb-2">Welcome, {{ user.get_full_name|default:user.username }}!</h1>
+            <p class="mb-0 opacity-75">Your personal dashboard for incident reports, announcements, and notifications.</p>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="user-quick-card text-center">
+                    <div class="stat-value text-primary">{{ report_stats.total }}</div>
+                    <div class="stat-label small text-muted">My Reports</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="user-quick-card text-center">
+                    <div class="stat-value text-warning">{{ report_stats.pending }}</div>
+                    <div class="stat-label small text-muted">Pending</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="user-quick-card text-center">
+                    <div class="stat-value text-info">{{ report_stats.ongoing }}</div>
+                    <div class="stat-label small text-muted">Under Review</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="user-quick-card text-center">
+                    <div class="stat-value text-success">{{ report_stats.resolved }}</div>
+                    <div class="stat-label small text-muted">Resolved</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="admin-section">
+                    <div class="admin-section-header">
+                        <h2><i class="fas fa-file-alt"></i> My Recent Reports</h2>
+                        <a href="{% url 'incident_report' %}" class="btn btn-sm btn-primary">New Report</a>
+                    </div>
+                    <div class="admin-section-body p-0">
+                        <div class="table-responsive">
+                            <table class="table admin-table mb-0">
+                                <thead><tr><th>Report ID</th><th>Type</th><th>Location</th><th>Status</th><th>Date</th></tr></thead>
+                                <tbody>
+                                {% for r in my_reports %}
+                                    <tr>
+                                        <td><code class="small">{{ r.report_id|truncatechars:10 }}</code></td>
+                                        <td>{{ r.get_incident_type_display_label }}</td>
+                                        <td>{% if r.barangay %}{{ r.barangay.name }}{% else %}—{% endif %}</td>
+                                        <td><span class="search-badge search-badge-muted">{{ r.get_status_display_label }}</span></td>
+                                        <td class="text-muted">{{ r.created_at|date:"M j, Y" }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr><td colspan="5">{% include 'search/_empty_state.html' with icon='fa-file-alt' title='No reports yet' message='Submit your first incident report using the button above.' %}</td></tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="user-quick-card mb-3">
+                    <h5 class="mb-3"><i class="fas fa-bell text-primary me-2"></i>Notifications</h5>
+                    <p class="mb-2">You have <strong>{{ unread_notifications }}</strong> unread notification{{ unread_notifications|pluralize }}.</p>
+                    <a href="{% url 'search_notifications' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="user-quick-card">
+                    <h5 class="mb-3"><i class="fas fa-bullhorn text-primary me-2"></i>Announcements</h5>
+                    {% for a in recent_announcements %}
+                    <div class="mb-2 pb-2 border-bottom">
+                        <strong class="d-block small">{{ a.title }}</strong>
+                        <span class="text-muted small">{{ a.created_at|date:"M j, Y" }}</span>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted small mb-0">No announcements yet.</p>
+                    {% endfor %}
+                    <a href="{% url 'search_announcements' %}" class="btn btn-sm btn-outline-primary mt-2">Browse All</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

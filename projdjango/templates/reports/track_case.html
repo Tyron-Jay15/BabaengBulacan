@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% block title %}Track Case - BabaengBulacan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4">Track Your Case</h2>
+
+                    <form id="track-form" class="mb-5">
+                        <div class="mb-3">
+                            <label for="case_number" class="form-label">Enter Your Case Number</label>
+                            <input type="text" class="form-control form-control-lg" id="case_number"
+                                   placeholder="e.g., BB-2024-00001" required>
+                            <small class="text-muted">Case number was provided when you submitted your report</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-search me-2"></i>Track Case
+                        </button>
+                    </form>
+
+                    <div id="case-details" class="d-none">
+                        <h4 class="mb-3">Case Information</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Case Number:</strong> <span id="display-case-number"></span></p>
+                                <p><strong>Status:</strong> <span id="case-status" class="badge bg-warning">Under Investigation</span></p>
+                                <p><strong>Incident Type:</strong> <span id="incident-type"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Submitted:</strong> <span id="submitted-date"></span></p>
+                                <p><strong>Last Updated:</strong> <span id="last-updated"></span></p>
+                                <p><strong>Assigned To:</strong> <span id="assigned-to"></span></p>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h5>Case Timeline</h5>
+                        <div class="timeline" id="case-timeline">
+                            <!-- Timeline items will be populated here -->
+                        </div>
+                    </div>
+
+                    <div id="no-results" class="text-center d-none">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h5>No case found</h5>
+                        <p>Please check your case number and try again.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e0e0e0;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -22px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #7B2CBF;
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.timeline-date {
+    font-size: 0.9rem;
+    color: #666;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$('#track-form').on('submit', function(e) {
+    e.preventDefault();
+    const caseNumber = $('#case_number').val().trim();
+
+    if (!caseNumber) {
+        alert('Please enter a case number');
+        return;
+    }
+
+    // Show loading
+    $('#case-details').addClass('d-none');
+    $('#no-results').addClass('d-none');
+
+    // Simulate API call (replace with actual API call)
+    setTimeout(() => {
+        // Mock data - replace with actual API response
+        const mockData = {
+            case_number: caseNumber,
+            status: 'investigating',
+            incident_type: 'Physical Violence',
+            submitted_date: '2024-01-15',
+            last_updated: '2024-01-20',
+            assigned_to: 'Sgt. Reyes',
+            timeline: [
+                {
+                    date: '2024-01-15 10:30 AM',
+                    action: 'Report Submitted',
+                    description: 'Anonymous report received and logged'
+                },
+                {
+                    date: '2024-01-16 2:15 PM',
+                    action: 'Case Assigned',
+                    description: 'Case assigned to PNP Women\'s Desk officer'
+                },
+                {
+                    date: '2024-01-18 9:00 AM',
+                    action: 'Investigation Started',
+                    description: 'Initial investigation and victim contact initiated'
+                },
+                {
+                    date: '2024-01-20 11:45 AM',
+                    action: 'Update',
+                    description: 'Evidence collected and witness statements taken'
+                }
+            ]
+        };
+
+        displayCaseDetails(mockData);
+    }, 1000);
+});
+
+function displayCaseDetails(data) {
+    $('#display-case-number').text(data.case_number);
+    $('#case-status').text(data.status.charAt(0).toUpperCase() + data.status.slice(1))
+                     .removeClass('bg-warning bg-success bg-danger')
+                     .addClass(getStatusBadgeClass(data.status));
+    $('#incident-type').text(data.incident_type);
+    $('#submitted-date').text(formatDate(data.submitted_date));
+    $('#last-updated').text(formatDate(data.last_updated));
+    $('#assigned-to').text(data.assigned_to);
+
+    // Populate timeline
+    const timelineHtml = data.timeline.map(item => `
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <h6>${item.action}</h6>
+                <p class="mb-1">${item.description}</p>
+                <small class="timeline-date">${item.date}</small>
+            </div>
+        </div>
+    `).join('');
+
+    $('#case-timeline').html(timelineHtml);
+    $('#case-details').removeClass('d-none');
+}
+
+function getStatusBadgeClass(status) {
+    const classes = {
+        'reported': 'bg-primary',
+        'investigating': 'bg-warning',
+        'resolved': 'bg-success',
+        'closed': 'bg-secondary'
+    };
+    return classes[status] || 'bg-secondary';
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+</script>
+{% endblock %}

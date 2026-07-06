@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Search Incident Reports - BabaengBulacan{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/search.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="search-module">
+    {% include 'search/_header.html' with icon='fa-file-alt' title='Incident Reports' subtitle='Search and filter incident reports by reporter, location, status, and date.' show_back=True total_count=total_count %}
+
+    <div class="container-xl pb-5">
+        <form method="get" class="search-filter-card">
+            <div class="search-filter-header">
+                <i class="fas fa-sliders-h"></i> Filters
+            </div>
+            <div class="search-filter-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-4 col-md-6">
+                        <label class="form-label" for="q">Keyword</label>
+                        <div class="search-input-wrap">
+                            <i class="fas fa-search search-input-icon"></i>
+                            <input type="text" class="form-control" id="q" name="q" value="{{ filters.q|default:'' }}"
+                                   placeholder="Reporter, type, barangay, report ID…">
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-2">
+                        <label class="form-label" for="status">Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">All statuses</option>
+                            {% for val, label in incident_statuses %}
+                            <option value="{{ val }}" {% if filters.status == val %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-lg-2">
+                        <label class="form-label" for="incident_type">Incident Type</label>
+                        <select class="form-select" id="incident_type" name="incident_type">
+                            <option value="">All types</option>
+                            {% for val, label in incident_types %}
+                            <option value="{{ val }}" {% if filters.incident_type == val %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-lg-2">
+                        <label class="form-label" for="barangay">Barangay</label>
+                        <select class="form-select" id="barangay" name="barangay">
+                            <option value="">All barangays</option>
+                            {% for b in barangays %}
+                            <option value="{{ b.id }}" {% if filters.barangay == b.id|stringformat:"s" %}selected{% endif %}>{{ b.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-lg-2">
+                        <label class="form-label" for="municipality">Municipality</label>
+                        <select class="form-select" id="municipality" name="municipality">
+                            <option value="">All municipalities</option>
+                            {% for m in municipalities %}
+                            <option value="{{ m.id }}" {% if filters.municipality == m.id|stringformat:"s" %}selected{% endif %}>{{ m.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-lg-2">
+                        <label class="form-label" for="date_from">Date from</label>
+                        <input type="date" class="form-control" id="date_from" name="date_from" value="{{ filters.date_from|default:'' }}">
+                    </div>
+                    <div class="col-md-6 col-lg-2">
+                        <label class="form-label" for="date_to">Date to</label>
+                        <input type="date" class="form-control" id="date_to" name="date_to" value="{{ filters.date_to|default:'' }}">
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="search-filter-actions">
+                            <button type="submit" class="btn btn-search"><i class="fas fa-search me-1"></i>Search</button>
+                            <a href="{% url 'search_incidents' %}" class="btn-reset">Reset</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="search-results-card">
+            <div class="search-results-header">
+                <span><i class="fas fa-table me-1"></i> Results</span>
+                <span class="text-muted fw-normal">{{ total_count }} total</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table search-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Report ID</th>
+                            <th>Reporter</th>
+                            <th>Type</th>
+                            <th>Barangay</th>
+                            <th>Municipality</th>
+                            <th>Status</th>
+                            <th>Officer</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for r in page_obj %}
+                        <tr>
+                            <td><code>{{ r.report_id|truncatechars:12 }}</code></td>
+                            <td><strong>{{ r.full_name }}</strong></td>
+                            <td>{{ r.get_incident_type_display_label }}</td>
+                            <td>{{ r.barangay.name|default:"—" }}</td>
+                            <td>{% if r.barangay %}{{ r.barangay.municipality.name }}{% else %}—{% endif %}</td>
+                            <td><span class="search-badge search-badge-muted">{{ r.get_status_display_label }}</span></td>
+                            <td>{% if r.assigned_officer %}{{ r.assigned_officer.get_full_name|default:r.assigned_officer.username }}{% else %}<span class="text-muted">—</span>{% endif %}</td>
+                            <td class="text-muted">{{ r.created_at|date:"M j, Y" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="8">{% include 'search/_empty_state.html' with icon='fa-file-alt' title='No incident reports match' message='Try different keywords or clear your filters.' %}</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% include 'search/_pagination.html' %}
+    </div>
+</div>
+{% endblock %}

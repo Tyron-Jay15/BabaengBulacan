@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% block title %}Register - BabaengBulacan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h3 class="text-center mb-4">Create Account</h3>
+                    
+                    {% if error %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ email }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        </div>
+
+                        <!-- Google reCAPTCHA v2 -->
+                        {% if RECAPTCHA_SHOW %}
+                        <div class="mb-3">
+                            <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_SITE_KEY }}"></div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Face Recognition Setup -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Face Recognition Setup</label>
+                            <p class="text-muted small">We need to capture your face for secure login verification.</p>
+                            
+                            <div class="text-center mb-3">
+                                <video id="video" width="320" height="240" autoplay class="border rounded d-none"></video>
+                                <canvas id="canvas" class="d-none"></canvas>
+                                <div id="no-camera" class="alert alert-warning d-none">
+                                    Camera access is required for registration.
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-center gap-2 mb-3">
+                                <button type="button" class="btn btn-outline-primary" id="startCamera">
+                                    <i class="fas fa-camera me-2"></i>Start Camera
+                                </button>
+                                <button type="button" class="btn btn-success d-none" id="captureFace">
+                                    <i class="fas fa-user-check me-2"></i>Capture Face
+                                </button>
+                            </div>
+                            
+                            <input type="hidden" id="faceImage" name="face_image">
+                            <div id="faceCaptured" class="alert alert-success d-none">
+                                <i class="fas fa-check-circle me-2"></i>Face captured successfully!
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" id="registerBtn" disabled>Create Account</button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <p class="mb-0">Already have an account? <a href="{% url 'login' %}">Log in</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script>
+// Face recognition for registration
+let videoStream = null;
+
+document.getElementById('startCamera').addEventListener('click', async function() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { width: 320, height: 240 } 
+        });
+        videoStream = stream;
+        
+        const video = document.getElementById('video');
+        video.srcObject = stream;
+        video.classList.remove('d-none');
+        
+        this.classList.add('d-none');
+        document.getElementById('captureFace').classList.remove('d-none');
+        document.getElementById('no-camera').classList.add('d-none');
+    } catch (error) {
+        console.error('Camera access error:', error);
+        document.getElementById('no-camera').classList.remove('d-none');
+        Swal.fire({
+            icon: 'error',
+            title: 'Camera Access Required',
+            text: 'Please allow camera access to complete registration.'
+        });
+    }
+});
+
+document.getElementById('captureFace').addEventListener('click', function() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Convert to base64
+    const imageData = canvas.toDataURL('image/jpeg', 0.8);
+    document.getElementById('faceImage').value = imageData;
+    
+    // Stop camera
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+    }
+    
+    video.classList.add('d-none');
+    this.classList.add('d-none');
+    document.getElementById('startCamera').classList.remove('d-none');
+    document.getElementById('faceCaptured').classList.remove('d-none');
+    document.getElementById('registerBtn').disabled = false;
+    
+    Swal.fire({
+        icon: 'success',
+        title: 'Face Captured!',
+        text: 'Your face has been captured for verification.',
+        timer: 2000
+    });
+});
+
+// Form validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    // Check reCAPTCHA (only if the widget is present)
+    if (typeof grecaptcha !== 'undefined' && document.querySelector('.g-recaptcha')) {
+        const recaptchaResponse = grecaptcha.getResponse();
+        if (!recaptchaResponse) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'reCAPTCHA Required',
+                text: 'Please complete the reCAPTCHA verification.'
+            });
+            return false;
+        }
+    }
+
+    const faceImage = document.getElementById('faceImage').value;
+    if (!faceImage) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'warning',
+            title: 'Face Required',
+            text: 'Please capture your face before registering.'
+        });
+        return false;
+    }
+});
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Enable/disable register button based on face capture
+    const faceImage = document.getElementById('faceImage');
+    const registerBtn = document.getElementById('registerBtn');
+    
+    // Check if face was already captured
+    if (faceImage.value) {
+        registerBtn.disabled = false;
+    }
+});
+</script>
+{% endblock %}

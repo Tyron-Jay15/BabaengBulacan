@@ -1,0 +1,66 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+{% block title %}Django Backend - Admin{% endblock %}
+
+{% block admin_hero %}
+<div class="admin-dash-hero">
+    <div class="container-xl">
+        <h1><i class="fas fa-database me-2"></i>Django Backend</h1>
+        <p>Jump directly into Django’s built-in admin to manage database records, users, and system data.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block admin_content %}
+<div class="container-xl pb-4">
+    <div class="admin-backend-actions mb-4">
+        <a href="{% url 'admin:index' %}" class="btn btn-primary" target="_blank" rel="noopener">
+            <i class="fas fa-external-link-alt me-1"></i>Open Full Django Admin
+        </a>
+        <a href="{% url 'security_dashboard' %}" class="btn btn-outline-primary">
+            <i class="fas fa-shield-alt me-1"></i>Security Dashboard
+        </a>
+    </div>
+
+    <div class="row g-4">
+        {% for section in admin_sections %}
+        <div class="col-lg-6">
+            <section class="admin-section admin-backend-section">
+                <div class="admin-section-header">
+                    <h2><i class="fas fa-folder-open"></i> {{ section.label }}</h2>
+                    <span class="badge bg-light text-dark">{{ section.models|length }} models</span>
+                </div>
+                <div class="admin-section-body p-0">
+                    <ul class="admin-backend-list">
+                        {% for model in section.models %}
+                        <li class="admin-backend-item">
+                            <a href="{{ model.url }}" class="admin-backend-link">
+                                <span class="admin-backend-name">{{ model.name }}</span>
+                                <i class="fas fa-chevron-right admin-backend-arrow"></i>
+                            </a>
+                            {% if model.add_url %}
+                            <a href="{{ model.add_url }}" class="admin-backend-add" title="Add {{ model.name }}">
+                                <i class="fas fa-plus"></i>
+                            </a>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </section>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-warning mb-0">No Django admin models are registered.</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="admin-backend-tip mt-4">
+        <i class="fas fa-info-circle me-2 text-primary"></i>
+        <strong>Tip:</strong> Use this hub for quick access, or open the full
+        <a href="{% url 'admin:index' %}" target="_blank" rel="noopener">Django Admin</a>
+        for advanced filtering, bulk actions, and inline editing.
+    </div>
+</div>
+{% endblock %}

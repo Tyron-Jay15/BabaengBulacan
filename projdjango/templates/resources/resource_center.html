@@ -1,0 +1,601 @@
+{% extends 'base.html' %}
+{% block title %}Resource Center - BabaengBulacan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center mb-5">
+            <h1>Resource Center</h1>
+            <p class="lead">Information, support services, and resources for women in Bulacan</p>
+        </div>
+    </div>
+
+    <!-- Quick Access Cards -->
+    <div class="row mb-5">
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100 border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <i class="fas fa-gavel fa-3x text-primary mb-3"></i>
+                    <h6>Know Your Rights</h6>
+                    <p class="small">Legal information and women's rights under Philippine law</p>
+                    <a href="#legal" class="btn btn-outline-primary btn-sm">Learn More</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100 border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <i class="fas fa-map-marked-alt fa-3x text-success mb-3"></i>
+                    <h6>Service Directory</h6>
+                    <p class="small">Find PNP stations, shelters, and support services near you</p>
+                    <a href="#services" class="btn btn-outline-success btn-sm">Find Services</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100 border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <i class="fas fa-question-circle fa-3x text-info mb-3"></i>
+                    <h6>FAQ</h6>
+                    <p class="small">Frequently asked questions about reporting and support</p>
+                    <a href="#faq" class="btn btn-outline-info btn-sm">View FAQ</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100 border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <i class="fas fa-phone fa-3x text-warning mb-3"></i>
+                    <h6>Emergency Contacts</h6>
+                    <p class="small">24/7 hotlines and emergency contact numbers</p>
+                    <a href="#contacts" class="btn btn-outline-warning btn-sm">Get Help</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legal Information Section -->
+    <section id="legal" class="mb-5">
+        <h2 class="mb-4">Know Your Rights</h2>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Republic Act 9262</h5>
+                        <p class="card-text">Anti-Violence Against Women and Their Children Act of 2004</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Protection from physical, sexual, psychological harm</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Right to obtain protection orders</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Support from PNP Women's Desks</li>
+                        </ul>
+                        <button class="btn btn-primary btn-sm" onclick="showLawModal('ra9262')">Read Full Law</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Republic Act 7877</h5>
+                        <p class="card-text">Anti-Sexual Harassment Act of 1995</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Protection in workplaces and schools</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Right to file complaints</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Penalties for offenders</li>
+                        </ul>
+                        <button class="btn btn-primary btn-sm" onclick="showLawModal('ra7877')">Read Full Law</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Directory Section -->
+    <section id="services" class="mb-5">
+        <h2 class="mb-4">Service Directory</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-shield-alt text-primary me-2"></i>
+                            PNP Women's Desks
+                        </h6>
+                        <p class="small">Police stations with specialized units for women and children</p>
+                        <ul class="list-unstyled small">
+                            <li>Malolos PNP Station</li>
+                            <li>Meycauayan PNP Station</li>
+                            <li>San Jose del Monte PNP</li>
+                        </ul>
+                        <button class="btn btn-outline-primary btn-sm" onclick="showMap('pnp')">
+                            <i class="fas fa-map-marker-alt me-1"></i>View Map
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-home text-success me-2"></i>
+                            Shelters & Safe Houses
+                        </h6>
+                        <p class="small">Emergency shelters for women and children in crisis</p>
+                        <ul class="list-unstyled small">
+                            <li>Bulacan Women's Shelter</li>
+                            <li>DSWD Crisis Center</li>
+                            <li>YWCA Safe House</li>
+                        </ul>
+                        <button class="btn btn-outline-success btn-sm" onclick="showMap('shelters')">
+                            <i class="fas fa-map-marker-alt me-1"></i>View Map
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-heart text-info me-2"></i>
+                            Counseling Centers
+                        </h6>
+                        <p class="small">Professional counseling and psychological support</p>
+                        <ul class="list-unstyled small">
+                            <li>Bulacan Mental Health Center</li>
+                            <li>YWCA Counseling Services</li>
+                            <li>Local NGO Partners</li>
+                        </ul>
+                        <button class="btn btn-outline-info btn-sm" onclick="showMap('counseling')">
+                            <i class="fas fa-map-marker-alt me-1"></i>View Map
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="mb-5">
+        <h2 class="mb-4">Frequently Asked Questions</h2>
+        <div class="accordion" id="faqAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                        Is my report anonymous?
+                    </button>
+                </h2>
+                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Yes, you can choose to report anonymously. Your identity will be protected and only authorized personnel will have access to your information.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                        What happens after I report?
+                    </button>
+                </h2>
+                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Your report will be reviewed within 24 hours. A case worker will be assigned and you will receive updates on the investigation progress.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                        Are the programs free?
+                    </button>
+                </h2>
+                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Yes, all empowerment programs are completely free for qualified participants. Transportation and meal allowances may be provided.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Contacts Section -->
+    <section id="contacts">
+        <h2 class="mb-4">Emergency Contacts</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="alert alert-danger">
+                    <h5><i class="fas fa-phone-alt me-2"></i>24/7 Crisis Hotline</h5>
+                    <h3 class="text-danger">999-8888</h3>
+                    <p class="mb-0">Call immediately if you are in danger</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5>Other Important Numbers</h5>
+                        <ul class="list-unstyled">
+                            <li><strong>PNP Women's Desk:</strong> 123-4567</li>
+                            <li><strong>DSWD Hotline:</strong> 765-4321</li>
+                            <li><strong>Medical Emergency:</strong> 911</li>
+                            <li><strong>Legal Aid:</strong> 555-0123</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Map Modal -->
+<div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mapModalLabel">Service Locations</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="googleMap" style="width: 100%; height: 500px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="lawModal" tabindex="-1" aria-labelledby="lawModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="lawModalLabel">Full Law Text</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="lawModalContent">
+                <!-- Law content will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Leaflet.js CSS & JS (Free alternative to Google Maps) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+<script>
+let map;
+let markers = [];
+let markerCluster = [];
+
+// Service location data
+const serviceLocations = {
+    'pnp': {
+        title: 'PNP Women\'s Desks',
+        locations: [
+            {
+                name: 'Malolos PNP Station',
+                lat: 14.8329,
+                lng: 121.0353,
+                address: 'Malolos, Bulacan',
+                phone: '(044) 662-1234'
+            },
+            {
+                name: 'Meycauayan PNP Station',
+                lat: 14.7596,
+                lng: 120.9842,
+                address: 'Meycauayan, Bulacan',
+                phone: '(044) 266-5678'
+            },
+            {
+                name: 'San Jose del Monte PNP',
+                lat: 14.8167,
+                lng: 121.0167,
+                address: 'San Jose del Monte, Bulacan',
+                phone: '(044) 682-9012'
+            }
+        ]
+    },
+    'shelters': {
+        title: 'Shelters & Safe Houses',
+        locations: [
+            {
+                name: 'Bulacan Women\'s Shelter',
+                lat: 14.8329,
+                lng: 121.0453,
+                address: 'Malolos, Bulacan',
+                phone: '(044) 662-5555'
+            },
+            {
+                name: 'DSWD Crisis Center',
+                lat: 14.7596,
+                lng: 120.9742,
+                address: 'Meycauayan, Bulacan',
+                phone: '(044) 266-7777'
+            },
+            {
+                name: 'YWCA Safe House',
+                lat: 14.8000,
+                lng: 121.0000,
+                address: 'San Jose del Monte, Bulacan',
+                phone: '(044) 682-3333'
+            }
+        ]
+    },
+    'counseling': {
+        title: 'Counseling Centers',
+        locations: [
+            {
+                name: 'Bulacan Mental Health Center',
+                lat: 14.8429,
+                lng: 121.0353,
+                address: 'Malolos, Bulacan',
+                phone: '(044) 662-8888'
+            },
+            {
+                name: 'YWCA Counseling Services',
+                lat: 14.7696,
+                lng: 120.9842,
+                address: 'Meycauayan, Bulacan',
+                phone: '(044) 266-9999'
+            },
+            {
+                name: 'Local NGO Partners',
+                lat: 14.8100,
+                lng: 121.0100,
+                address: 'San Jose del Monte, Bulacan',
+                phone: '(044) 682-4444'
+            }
+        ]
+    }
+};
+
+function initializeMap(locations) {
+    // Initialize map if not already done
+    if (!map) {
+        map = L.map('googleMap').setView([14.8, 121.0], 11);
+        
+        // Add OpenStreetMap tile layer (FREE - no API key needed!)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+    }
+
+    // Clear existing markers
+    markerCluster.forEach(marker => map.removeLayer(marker));
+    markerCluster = [];
+
+    // Add markers for each location
+    locations.forEach((location) => {
+        // Create custom icon
+        const icon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        // Create marker with popup
+        const popupContent = `
+            <div style="min-width: 250px;">
+                <h6 style="margin: 0 0 8px 0; font-weight: bold; color: #d32f2f;">
+                    <i class="fas fa-map-marker-alt"></i> ${location.name}
+                </h6>
+                <p style="margin: 5px 0; font-size: 0.9rem;">
+                    <i class="fas fa-map-pin"></i> <strong>Address:</strong><br>${location.address}
+                </p>
+                <p style="margin: 5px 0; font-size: 0.9rem;">
+                    <i class="fas fa-phone"></i> <strong>Phone:</strong><br>${location.phone}
+                </p>
+                <a href="https://www.openstreetmap.org/?mlat=${location.lat}&mlon=${location.lng}&zoom=15" 
+                   target="_blank" class="btn btn-sm btn-primary mt-2">
+                    <i class="fas fa-directions"></i> Get Directions
+                </a>
+            </div>
+        `;
+
+        const marker = L.marker([location.lat, location.lng], { icon: icon })
+            .bindPopup(popupContent)
+            .addTo(map);
+
+        markerCluster.push(marker);
+    });
+
+    // Fit map to bounds of all markers
+    if (markerCluster.length > 0) {
+        const group = new L.featureGroup(markerCluster);
+        map.fitBounds(group.getBounds().pad(0.1), { maxZoom: 12 });
+    }
+}
+
+function showMap(serviceType) {
+    console.log('showMap called with serviceType:', serviceType);
+    
+    const serviceData = serviceLocations[serviceType];
+    if (serviceData) {
+        document.getElementById('mapModalLabel').textContent = serviceData.title;
+        const mapModal = new bootstrap.Modal(document.getElementById('mapModal'));
+        mapModal.show();
+
+        // Initialize map after modal is shown and DOM is updated
+        setTimeout(() => {
+            console.log('Initializing map for:', serviceType);
+            initializeMap(serviceData.locations);
+        }, 500);
+    } else {
+        console.error('Service type not found:', serviceType);
+        alert('Service type not found');
+    }
+}
+
+const lawData = {
+    'ra9262': {
+        title: 'Republic Act 9262 - Anti-Violence Against Women and Their Children Act of 2004',
+        content: `
+<h4>REPUBLIC ACT NO. 9262</h4>
+<h5>AN ACT DEFINING VIOLENCE AGAINST WOMEN AND THEIR CHILDREN, PROVIDING FOR PROTECTIVE MEASURES FOR VICTIMS, PRESCRIBING PENALTIES THEREFORE, AND FOR OTHER PURPOSES</h5>
+
+<p><strong>Be it enacted by the Senate and House of Representatives of the Philippines in Congress assembled:</strong></p>
+
+<h6>SECTION 1. Short Title</h6>
+<p>This Act shall be known as the "Anti-Violence Against Women and Their Children Act of 2004."</p>
+
+<h6>SECTION 2. Declaration of Policy</h6>
+<p>The State recognizes the rights of women and children to be protected from violence and threats to their personal safety and security. It is the policy of the State to protect the family and promote its development as the basic social institution, and to ensure the protection and development of women.</p>
+
+<h6>SECTION 3. Definition of Terms</h6>
+<p><strong>Violence against women and their children</strong> refers to any act or a series of acts committed by any person against a woman who is his wife, former wife, or against a woman with whom he has or had a sexual or dating relationship, or with whom he has a common child, or his mother, or his child as defined in this Act, or any woman who is a member of the family, household, or living as one with such person, or any woman who is otherwise related to him by consanguinity or affinity, consisting of but not limited to the following acts:</p>
+
+<ol>
+    <li><strong>Physical Violence</strong> – acts which include but are not limited to pushing, hitting, slapping, throwing of objects, punching, kicking, choking, arm-twisting, biting, stabbing and burning, which result in physical injury;</li>
+    <li><strong>Sexual Violence</strong> – acts which include but are not limited to rape, qualified rape, sexual coercion, sexual harassment and rape committed by an intimate partner;</li>
+    <li><strong>Psychological Violence</strong> – acts or omissions causing or likely to cause mental or emotional suffering of the victim such as but not limited to intimidation, harassment, stalking, damage to property, public ridicule or humiliation, repeated verbal abuse and marital infidelity. It includes causing or allowing the victim to witness the physical, sexual or psychological abuse of a member of the family to which the victim is closely related, or any act or omission that causes mental or emotional anguish, public embarrassment or ridicule of the victim.</li>
+    <li><strong>Economic Abuse</strong> – acts that make or attempt to make a woman financially dependent which includes but is not limited to the deliberate deprivation of financial resources and forfeiture of earned wages, denial of right to own, sell or control property, or restriction of access to money or credit facilities.</li>
+</ol>
+
+<h6>SECTION 4. Rights of Victims of Violence Against Women and Their Children</h6>
+<p>Any woman who is a victim of violence covered by this Act shall have the right to:</p>
+
+<ol>
+    <li>Demand security and protection from the police and barangay officials;</li>
+    <li>Be immediately informed of all her rights, particularly her right to demand issuance of a protection order by the court;</li>
+    <li>Avail of free legal services in criminal, civil or administrative cases;</li>
+    <li>Avail of free medical examination and treatment if the violence resulted in physical injuries;</li>
+    <li>Obtain counseling and psychological support services from the Department of Social Welfare and Development (DSWD);</li>
+    <li>Obtain temporary custody of her minor children, to support, maintenance, and the exclusive occupancy of the conjugal dwelling;</li>
+    <li>Be informed of the status of the criminal case filed against her batterer;</li>
+    <li>Be accompanied by a representative from the PNP Women's Desk, barangay officials or non-governmental organizations (NGOs) during police investigation and medical examination;</li>
+    <li>Sue her batterer for support and maintenance under the Family Code and recover attorneys fees and costs;</li>
+    <li>Sue her batterer for actual damages and moral damages, and exemplary damages under the Civil Code.</li>
+</ol>
+
+<h6>SECTION 5. Protection Order</h6>
+<p>Any woman who is a victim of violence or threats of violence may apply for and obtain a protection order from the court. A protection order is an order granted to prevent, prohibit or restrain the commission of acts of violence against a woman and her children and shall contain the following:</p>
+
+<ol>
+    <li>An order enjoining the respondent from committing further acts of violence;</li>
+    <li>An order granting temporary custody of minor children to the petitioner or any responsible person;</li>
+    <li>An order granting the petitioner the exclusive occupancy of the conjugal dwelling;</li>
+    <li>An order restraining the respondent from going to specified places where the victim usually goes or works;</li>
+    <li>An order requiring the respondent to give financial support for the victim's living expenses and those of her minor children.</li>
+</ol>
+
+<h6>SECTION 6. Penalties</h6>
+<p>Violations of this Act shall be punished as follows:</p>
+
+<ol>
+    <li>Any person found guilty of causing physical violence shall suffer the penalty of prision mayor;</li>
+    <li>Any person found guilty of causing psychological violence shall suffer the penalty of prision correccional;</li>
+    <li>Any person found guilty of causing economic abuse shall suffer the penalty of prision correccional in its medium and maximum periods;</li>
+    <li>Any person found guilty of violation of a protection order shall suffer the penalty of one year imprisonment and a fine of thirty thousand pesos (PHP 30,000.00) to fifty thousand pesos (PHP 50,000.00).</li>
+</ol>
+
+<h6>Additional Information</h6>
+<p>This law provides comprehensive protection for women and children from violence in intimate relationships and family settings. If you are a victim of violence, you may file a complaint with:</p>
+<ul>
+    <li>Philippine National Police (PNP) Women's Desk</li>
+    <li>Barangay officials</li>
+    <li>Department of Justice (DOJ)</li>
+    <li>Department of Social Welfare and Development (DSWD)</li>
+</ul>
+        `
+    },
+    'ra7877': {
+        title: 'Republic Act 7877 - Anti-Sexual Harassment Act of 1995',
+        content: `
+<h4>REPUBLIC ACT NO. 7877</h4>
+<h5>AN ACT DECLARING SEXUAL HARASSMENT UNLAWFUL IN THE EMPLOYMENT, EDUCATION OR TRAINING ENVIRONMENT, AND FOR OTHER PURPOSES</h5>
+
+<p><strong>Be it enacted by the Senate and House of Representatives of the Philippines in Congress assembled:</strong></p>
+
+<h6>SECTION 1. Short Title</h6>
+<p>This Act shall be known as the "Anti-Sexual Harassment Act of 1995."</p>
+
+<h6>SECTION 2. Declaration of Policy</h6>
+<p>The State values the dignity of every individual, enhances the development of its human resources, and protects and safeguards the rights of all workers, employees, applicants for employment, students or those undergoing training, instruction or studies. The State recognizes the rights of said individuals to be free from sexual harassment when committed in the work place or in any educational or training environment.</p>
+
+<h6>SECTION 3. Definition of Sexual Harassment</h6>
+<p><strong>Sexual harassment</strong> is committed when:</p>
+
+<ol>
+    <li>Against a woman, when the sexual favor is made a condition precedent to her employment, continued employment or any promotion, renewal of contract, or improvement of working conditions; and said employee, applicant for employment, student or those undergoing training or instruction refuses or has become an object of loss of employment, discharge, demotion, loss of promotion, or any adverse personnel action whatsoever.</li>
+    <li>Against a woman or man, when the act of sexual harassment results in an intimidating, hostile, or offensive work, educational, or training environment for the employee, applicant for employment, student, trainee, or any person undergoing instruction or training.</li>
+</ol>
+
+<h6>SECTION 4. Work, Educational or Training Environment</h6>
+<p>Sexual harassment is unlawful when committed in the following work, educational or training environments:</p>
+
+<ol>
+    <li>In the employment of national, provincial, city, municipal and barangay offices, including government-owned or controlled corporations, government educational institutions; and non-governmental organizations; and;</li>
+    <li>In consideration of or in connection with any proposed, pending or current promotion, appointment, assignment, reinstatement, salaries, allowance, benefits, leave, increase in salary or other changes in the terms and conditions of employment of the complainant.</li>
+    <li>In schools, colleges, universities and educational institutions, both public and private engaged in vocational, technical, academic, medical and other studies or training.</li>
+</ol>
+
+<h6>SECTION 5. Parties to Sexual Harassment</h6>
+<p>The parties to an act or series of acts of sexual harassment are:</p>
+
+<ol>
+    <li>The offender – any person who commits an act or series of acts of sexual harassment as defined in Section 3, hereof;</li>
+    <li>The complainant – the woman or man against whom sexual harassment is committed.</li>
+</ol>
+
+<h6>SECTION 6. Remedies Available to Victims</h6>
+<p>Victims of sexual harassment shall have the following remedies:</p>
+
+<ol>
+    <li>The victim shall file a complaint with the appropriate entity such as the National Labor Relations Commission (NLRC), Civil Service Commission (CSC), or appropriate educational institution;</li>
+    <li>The victim may claim actual, moral, and exemplary damages before the appropriate court;</li>
+    <li>In cases where the sexual harassment was committed in an educational or training environment, the victim may seek disciplinary action against the offender;</li>
+    <li>The victim may also seek protection orders from the courts to prevent further harassment.</li>
+</ol>
+
+<h6>SECTION 7. Penalties</h6>
+<p>Any person found guilty of sexual harassment shall be punished as follows:</p>
+
+<ol>
+    <li>In cases of sexual harassment committed in the employment setting, the offender shall suffer the penalty of fine of not less than ten thousand pesos (PHP 10,000.00) to twenty thousand pesos (PHP 20,000.00), or imprisonment of not less than one month to three months, or both;</li>
+    <li>In cases of sexual harassment committed in the educational or training environment, the offender shall be subject to disciplinary sanctions, and may also be subjected to criminal prosecution and damages as provided in this Act;</li>
+    <li>If the offender holds a public office or position, he/she shall also suffer the accessory penalty of perpetual absolute disqualification from public office.</li>
+</ol>
+
+<h6>SECTION 8. Complementary Measures</h6>
+<p>All employers, whether government or private, and all educational institutions shall implement the following:</p>
+
+<ol>
+    <li>Establish a policy strictly prohibiting sexual harassment;</li>
+    <li>Provide mechanisms for the filing, investigation, and resolution of sexual harassment complaints;</li>
+    <li>Provide education and training programs on sexual harassment prevention;</li>
+    <li>Ensure that victims of sexual harassment are protected from retaliation;</li>
+    <li>Maintain confidentiality of complainants and witnesses to the extent possible.</li>
+</ol>
+
+<h6>Additional Information</h6>
+<p>This law protects both men and women from sexual harassment in the workplace and educational settings. If you experience sexual harassment, you may file a complaint with:</p>
+<ul>
+    <li>National Labor Relations Commission (NLRC) - for employment cases</li>
+    <li>Civil Service Commission (CSC) - for government employees</li>
+    <li>Your educational institution's disciplinary board</li>
+    <li>The Philippine National Police (PNP)</li>
+    <li>Appropriate courts for damages</li>
+</ul>
+        `
+    }
+};
+
+function showLawModal(lawId) {
+    const lawInfo = lawData[lawId];
+    if (lawInfo) {
+        document.getElementById('lawModalLabel').textContent = lawInfo.title;
+        document.getElementById('lawModalContent').innerHTML = lawInfo.content;
+        const lawModal = new bootstrap.Modal(document.getElementById('lawModal'));
+        lawModal.show();
+    }
+}
+</script>
+{% endblock %}

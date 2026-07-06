@@ -1,0 +1,10 @@
+{% extends 'emails/base_email.html' %}
+{% block content %}
+<h2>Incident Status Update</h2>
+<p>Dear {{ incident.full_name }},</p>
+<p>Your incident report <strong>{{ incident.report_id }}</strong> has been updated.</p>
+<p><strong>Previous status:</strong> {{ old_status }}<br>
+<strong>Current status:</strong> {{ new_status }}</p>
+<p><a href="{{ track_link }}">Track your case online</a></p>
+<p>Thank you for using BabaengBulacan.</p>
+{% endblock %}

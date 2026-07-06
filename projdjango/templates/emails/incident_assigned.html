@@ -1,0 +1,8 @@
+{% extends 'emails/base_email.html' %}
+{% block content %}
+<h2>Officer Assigned to Your Case</h2>
+<p>Dear {{ incident.full_name }},</p>
+<p>An officer has been assigned to review your incident report <strong>{{ incident.report_id }}</strong>.</p>
+<p><strong>Assigned officer:</strong> {{ officer_name }}</p>
+<p><a href="{{ track_link }}">Track your case online</a></p>
+{% endblock %}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block subject %}{{ site_name }}{% endblock %}</title>
+    <style>
+        @media only screen and (max-width: 600px) {
+            .bb-container { width: 100% !important; }
+            .bb-pad { padding-left: 22px !important; padding-right: 22px !important; }
+            .bb-btn a { display: block !important; }
+        }
+        body { margin: 0; padding: 0; background-color: #f3f0f9; }
+        a { color: #7B2CBF; }
+    </style>
+</head>
+<body style="margin:0; padding:0; background-color:#f3f0f9; font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+    <!-- preheader (hidden) -->
+    <div style="display:none; max-height:0; overflow:hidden; opacity:0;">{% block preheader %}{{ site_name }} security notification{% endblock %}</div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f3f0f9;">
+        <tr>
+            <td align="center" style="padding: 28px 12px;">
+                <table role="presentation" class="bb-container" width="600" cellpadding="0" cellspacing="0" style="width:600px; max-width:600px; background-color:#ffffff; border-radius:14px; overflow:hidden; box-shadow:0 6px 24px rgba(76,29,149,0.10);">
+
+                    <!-- Header -->
+                    <tr>
+                        <td bgcolor="#7B2CBF" style="background-color:#7B2CBF; padding:30px 36px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td style="color:#ffffff; font-size:22px; font-weight:700; letter-spacing:0.3px;">
+                                        {{ site_name }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="color:#e9d8fd; font-size:13px; padding-top:4px;">
+                                        {{ site_tagline }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td class="bb-pad" style="padding:36px 36px 12px 36px; color:#2d2540; font-size:15px; line-height:1.65;">
+                            {% block content %}{% endblock %}
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td class="bb-pad" style="padding:24px 36px 32px 36px; border-top:1px solid #efeaf7; color:#8a82a3; font-size:12px; line-height:1.6;">
+                            <p style="margin:0 0 6px 0;">This is an automated security message from {{ site_name }}.</p>
+                            <p style="margin:0 0 6px 0;">If you did not expect this email, you can safely ignore it or contact our support team.</p>
+                            <p style="margin:10px 0 0 0; color:#b5aecb;">&copy; {{ year }} {{ site_name }} &middot; {{ site_tagline }}</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

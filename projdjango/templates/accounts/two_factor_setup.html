@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Set Up Two-Factor Authentication - BabaengBulacan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-shield-halved fa-3x text-primary mb-3"></i>
+                        <h3>Set Up Two-Factor Authentication</h3>
+                        <p class="text-muted">Add an extra layer of security to your account.</p>
+                    </div>
+
+                    {% if error %}
+                    <div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>{{ error }}</div>
+                    {% endif %}
+
+                    <ol class="mb-4">
+                        <li class="mb-2">Install an authenticator app (Google Authenticator, Microsoft Authenticator, or Authy).</li>
+                        <li class="mb-2">Scan the QR code below, or enter the setup key manually.</li>
+                        <li>Enter the 6-digit code from the app to finish enabling 2FA.</li>
+                    </ol>
+
+                    <div class="text-center mb-3">
+                        <img src="{{ qr_data_uri }}" alt="2FA QR code" class="border rounded p-2 bg-white" style="max-width:220px;">
+                    </div>
+
+                    <div class="mb-4 text-center">
+                        <p class="text-muted small mb-1">Can't scan? Enter this key manually:</p>
+                        <code class="user-select-all" style="font-size:1.05rem; letter-spacing:2px;">{{ secret }}</code>
+                    </div>
+
+                    <form method="post" action="{% url 'two_factor_enable' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="code" class="form-label">Verification Code</label>
+                            <input type="text" class="form-control form-control-lg text-center" id="code" name="code"
+                                   inputmode="numeric" maxlength="6" pattern="[0-9]*" placeholder="000000" required autofocus>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-check me-2"></i>Verify &amp; Enable 2FA
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a href="{% url 'profile' %}" class="text-muted small">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

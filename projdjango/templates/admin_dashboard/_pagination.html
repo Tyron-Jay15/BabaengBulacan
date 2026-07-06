@@ -1,0 +1,27 @@
+{% if paginator.num_pages > 1 %}
+<nav aria-label="Pagination" class="search-pagination mt-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <p class="search-record-count mb-0">
+            Page <strong>{{ page_obj.number }}</strong> of <strong>{{ paginator.num_pages }}</strong>
+            &middot; <strong>{{ total_count }}</strong> record{{ total_count|pluralize }}
+        </p>
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+                <a class="page-link" href="?{% if query_string %}{{ query_string }}&{% endif %}{{ page_param }}=1">&laquo; First</a>
+            </li>
+            <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+                <a class="page-link" href="?{% if query_string %}{{ query_string }}&{% endif %}{{ page_param }}={% if page_obj.has_previous %}{{ page_obj.previous_page_number }}{% else %}1{% endif %}">&lsaquo; Prev</a>
+            </li>
+            <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+            <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+                <a class="page-link" href="?{% if query_string %}{{ query_string }}&{% endif %}{{ page_param }}={% if page_obj.has_next %}{{ page_obj.next_page_number }}{% else %}{{ paginator.num_pages }}{% endif %}">Next &rsaquo;</a>
+            </li>
+            <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+                <a class="page-link" href="?{% if query_string %}{{ query_string }}&{% endif %}{{ page_param }}={{ paginator.num_pages }}">Last &raquo;</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+{% elif total_count %}
+<p class="search-record-count mt-3 mb-0"><strong>{{ total_count }}</strong> record{{ total_count|pluralize }} found.</p>
+{% endif %}

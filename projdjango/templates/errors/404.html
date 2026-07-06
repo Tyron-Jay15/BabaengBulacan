@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Page Not Found - BabaengBulacan{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h1 class="display-4">404</h1>
+                    <p class="lead">Sorry, we couldn't find that page.</p>
+                    <a href="{% url 'home' %}" class="btn btn-primary">Go back home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

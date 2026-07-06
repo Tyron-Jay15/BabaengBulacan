@@ -1,0 +1,12 @@
+{% extends 'emails/base_email.html' %}
+{% block subject %}Security alert: your account was temporarily locked{% endblock %}
+{% block preheader %}Too many failed sign-in attempts were detected.{% endblock %}
+{% block content %}
+<h1 style="margin:0 0 14px 0; font-size:21px; color:#b02a37;">Account temporarily locked ⚠️</h1>
+<p style="margin:0 0 14px 0;">We detected several failed sign-in attempts on your {{ site_name }} account, so we've temporarily locked it as a precaution.</p>
+<p style="margin:0 0 14px 0;">Your account will automatically unlock in about <strong>{{ lockout_minutes }} minutes</strong>. You can also reset your password to regain access right away.</p>
+
+{% include 'emails/_meta.html' %}
+
+<p style="margin:0;"><strong>If this wasn't you</strong>, someone may be trying to access your account. We strongly recommend resetting your password.</p>
+{% endblock %}

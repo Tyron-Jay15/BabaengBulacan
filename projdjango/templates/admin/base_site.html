@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('BabaengBulacan Admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('BabaengBulacan Administration') }}</a></h1>
+{% endblock %}
+
+{% block nav-global %}
+<div style="display:inline-block; margin-left:20px;">
+    <a href="{% url 'security_dashboard' %}"
+       style="color:#fff; background:#7B2CBF; padding:7px 14px; border-radius:6px; text-decoration:none; font-weight:600;">
+        🛡️ Security Dashboard
+    </a>
+</div>
+{% endblock %}

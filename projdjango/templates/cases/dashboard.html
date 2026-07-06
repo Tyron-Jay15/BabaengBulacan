@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+{% block title %}Case Dashboard - BabaengBulacan{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4">Case Management Dashboard</h2>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card stat-primary">
+                <div class="card-body">
+                    <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                    <h3 class="stat-number">1,247</h3>
+                    <p class="stat-label">Total Cases</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card stat-warning">
+                <div class="card-body">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <h3 class="stat-number">89</h3>
+                    <p class="stat-label">Pending</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card stat-info">
+                <div class="card-body">
+                    <div class="stat-icon"><i class="fas fa-search"></i></div>
+                    <h3 class="stat-number">156</h3>
+                    <p class="stat-label">Under Investigation</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card stat-success">
+                <div class="card-body">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <h3 class="stat-number">1,002</h3>
+                    <p class="stat-label">Resolved</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Quick Access -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-primary shadow-sm" style="border-left: 4px solid #0d6efd;">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-10">
+                            <h5 class="card-title mb-2">
+                                <i class="fas fa-robot text-primary me-2"></i>Need Help? Use Our AI Assistant
+                            </h5>
+                            <p class="card-text text-muted mb-0">
+                                Ask questions about reporting abuse, legal rights, services, emergency contacts, and more. Our intelligent chatbot can help you find answers 24/7.
+                            </p>
+                        </div>
+                        <div class="col-md-2 text-md-end mt-3 mt-md-0">
+                            <a href="{% url 'chatbot' %}" class="btn btn-primary">
+                                <i class="fas fa-comments me-2"></i>Open Chat
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Table -->
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Filter Sidebar -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>Filters</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="filter-status">
+                            <option value="">All</option>
+                            <option value="reported">Reported</option>
+                            <option value="investigating">Investigating</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Municipality</label>
+                        <select class="form-select" id="filter-municipality">
+                            <option value="">All</option>
+                            <option value="Malolos">Malolos</option>
+                            <option value="Meycauayan">Meycauayan</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Incident Type</label>
+                        <select class="form-select" id="filter-type">
+                            <option value="">All</option>
+                            <option value="physical">Physical</option>
+                            <option value="emotional">Emotional</option>
+                            <option value="sexual">Sexual</option>
+                            <option value="economic">Economic</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary w-100" onclick="applyFilters()">Apply Filters</button>
+                    <button class="btn btn-secondary w-100 mt-2" onclick="resetFilters()">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <!-- Cases Table -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Cases</h5>
+                    <button class="btn btn-success btn-sm" onclick="exportData()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+                <div class="card-body">
+                    <table id="cases-table" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Case Number</th>
+                                <th>Type</th>
+                                <th>Municipality</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Assigned To</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Sample data for demonstration -->
+                            <tr>
+                                <td>BB-2024-00001</td>
+                                <td><span class="badge bg-danger">Physical</span></td>
+                                <td>Malolos</td>
+                                <td>2024-01-15</td>
+                                <td><span class="badge bg-warning">Investigating</span></td>
+                                <td>Sgt. Reyes</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="viewCase('BB-2024-00001')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" onclick="assignCase('BB-2024-00001')">
+                                        <i class="fas fa-user-plus"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>BB-2024-00002</td>
+                                <td><span class="badge bg-warning">Emotional</span></td>
+                                <td>Meycauayan</td>
+                                <td>2024-01-20</td>
+                                <td><span class="badge bg-success">Resolved</span></td>
+                                <td>Ms. Santos</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="viewCase('BB-2024-00002')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" onclick="assignCase('BB-2024-00002')">
+                                        <i class="fas fa-user-plus"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Add more sample rows as needed -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script>
+// Initialize DataTable
+$(document).ready(function() {
+    $('#cases-table').DataTable({
+        pageLength: 20,
+        order: [[3, 'desc']]
+    });
+});
+
+function viewCase(caseId) {
+    window.location.href = `/cases/${caseId}`;
+}
+
+function assignCase(caseId) {
+    // Show assignment modal (placeholder)
+    alert(`Assign case ${caseId}`);
+}
+
+function applyFilters() {
+    const status = $('#filter-status').val();
+    const municipality = $('#filter-municipality').val();
+    const type = $('#filter-type').val();
+
+    // Apply filters to table (placeholder - would filter the DataTable)
+    console.log('Applying filters:', { status, municipality, type });
+}
+
+function resetFilters() {
+    $('#filter-status').val('');
+    $('#filter-municipality').val('');
+    $('#filter-type').val('');
+    // Reset table filters
+}
+
+function exportData() {
+    // Export functionality (placeholder)
+    alert('Export functionality would be implemented here');
+}
+</script>
+{% endblock %}

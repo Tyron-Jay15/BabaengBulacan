@@ -1,0 +1,397 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home - BabaengBulacan{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Background Image -->
+<section class="hero-section text-center text-white position-relative overflow-hidden" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{% static 'images/your-voice-matters.jpg' %}'); background-size: cover; background-position: center; min-height: 700px; display: flex; align-items: center;">
+    <div class="container position-relative z-2">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-2 fw-bold mb-4 animated" style="animation: slideInLeft 0.8s ease-out; text-shadow: 2px 2px 8px rgba(0,0,0,0.5);">Your Voice Matters</h1>
+                <p class="lead mb-5 fs-4" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">Speak up, share your story, and inspire change. Together, we build a stronger, more equal world.</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{% url 'anonymous_report' %}" class="btn btn-light btn-lg px-5 fw-bold">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Report Incident
+                    </a>
+                    <a href="#carousel-section" class="btn btn-outline-light btn-lg px-5 fw-bold border-2">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Emergency Banner -->
+<div class="bg-danger text-white py-3 shadow-sm">
+    <div class="container text-center">
+        <i class="fas fa-phone-alt me-2"></i>
+        <strong>Emergency Hotline:</strong> Call 999-8888 for immediate assistance • Available 24/7
+    </div>
+</div>
+
+<!-- Mobile-friendly access -->
+<section class="py-4 bg-white border-bottom d-lg-none">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                {% include 'components/mobile_app_hint.html' with show_pwa_hint=True %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Overview -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5 fw-bold">Our Impact</h2>
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <div class="stat-card p-4 rounded-3 bg-white shadow-sm h-100 transition" style="transform: translateY(0); transition: all 0.3s ease;">
+                    <i class="fas fa-users stat-icon text-primary mb-3" style="font-size: 2.5rem;"></i>
+                    <h3 class="stat-number text-primary fw-bold">2,500+</h3>
+                    <p class="stat-label text-muted">Women Empowered</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card p-4 rounded-3 bg-white shadow-sm h-100 transition" style="transform: translateY(0); transition: all 0.3s ease;">
+                    <i class="fas fa-file-alt stat-icon text-success mb-3" style="font-size: 2.5rem;"></i>
+                    <h3 class="stat-number text-success fw-bold">1,200+</h3>
+                    <p class="stat-label text-muted">Cases Resolved</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card p-4 rounded-3 bg-white shadow-sm h-100 transition" style="transform: translateY(0); transition: all 0.3s ease;">
+                    <i class="fas fa-graduation-cap stat-icon text-warning mb-3" style="font-size: 2.5rem;"></i>
+                    <h3 class="stat-number text-warning fw-bold">850+</h3>
+                    <p class="stat-label text-muted">Program Graduates</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card p-4 rounded-3 bg-white shadow-sm h-100 transition" style="transform: translateY(0); transition: all 0.3s ease;">
+                    <i class="fas fa-map-marker-alt stat-icon text-info mb-3" style="font-size: 2.5rem;"></i>
+                    <h3 class="stat-number text-info fw-bold">21</h3>
+                    <p class="stat-label text-muted">Municipalities Served</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Women Empowerment Carousel Section -->
+<section id="carousel-section" class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Women's Empowerment in Action</h2>
+            <p class="lead text-muted">Discover the stories and programs transforming lives across Bulacan</p>
+        </div>
+        
+        <div id="empowermentCarousel" class="carousel slide" data-bs-ride="carousel">
+            <!-- Carousel Indicators -->
+            <div class="carousel-indicators mb-4">
+                <button type="button" data-bs-target="#empowermentCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+                <button type="button" data-bs-target="#empowermentCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#empowermentCarousel" data-bs-slide-to="2"></button>
+                <button type="button" data-bs-target="#empowermentCarousel" data-bs-slide-to="3"></button>
+                <button type="button" data-bs-target="#empowermentCarousel" data-bs-slide-to="4"></button>
+            </div>
+
+            <!-- Carousel Items -->
+            <div class="carousel-inner rounded-3 overflow-hidden shadow-lg">
+                <!-- Slide 1: Economic Empowerment -->
+                <div class="carousel-item active">
+                    <div class="row align-items-center g-0">
+                        <div class="col-lg-6">
+                            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop" alt="Economic Empowerment" class="w-100 h-100" style="object-fit: cover; min-height: 400px;">
+                        </div>
+                        <div class="col-lg-6 p-5 bg-light">
+                            <h3 class="text-primary fw-bold mb-3">💼 Economic Empowerment</h3>
+                            <p class="text-muted mb-4">Through our livelihood programs, women gain financial independence and entrepreneurial skills. Our graduates have successfully established small businesses and cooperatives across Bulacan.</p>
+                            <ul class="list-unstyled mb-4">
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Skills training in 15+ trades</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Business startup support</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Microfinance assistance</li>
+                            </ul>
+                            <a href="{% url 'programs' %}" class="btn btn-primary">Explore Programs</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Education & Literacy -->
+                <div class="carousel-item">
+                    <div class="row align-items-center g-0">
+                        <div class="col-lg-6">
+                            <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&h=400&fit=crop" alt="Education" class="w-100 h-100" style="object-fit: cover; min-height: 400px;">
+                        </div>
+                        <div class="col-lg-6 p-5 bg-light">
+                            <h3 class="text-success fw-bold mb-3">📚 Education & Skills</h3>
+                            <p class="text-muted mb-4">Knowledge is power. We provide literacy programs, technical training, and digital skills workshops to help women advance their careers and personal development.</p>
+                            <ul class="list-unstyled mb-4">
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Adult literacy programs</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Digital literacy & tech skills</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Leadership development</li>
+                            </ul>
+                            <a href="{% url 'programs' %}" class="btn btn-success">View Courses</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3: Health & Wellness -->
+                <div class="carousel-item">
+                    <div class="row align-items-center g-0">
+                        <div class="col-lg-6">
+                            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&h=400&fit=crop" alt="Health & Wellness" class="w-100 h-100" style="object-fit: cover; min-height: 400px;">
+                        </div>
+                        <div class="col-lg-6 p-5 bg-light">
+                            <h3 class="text-info fw-bold mb-3">🏥 Health & Wellness</h3>
+                            <p class="text-muted mb-4">Women's health is our priority. We provide access to counseling, healthcare services, reproductive health information, and mental wellness support for women and their families.</p>
+                            <ul class="list-unstyled mb-4">
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Mental health counseling</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Healthcare referrals</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Wellness workshops</li>
+                            </ul>
+                            <a href="{% url 'resources' %}" class="btn btn-info">Get Support</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 4: Legal Protection & Rights -->
+                <div class="carousel-item">
+                    <div class="row align-items-center g-0">
+                        <div class="col-lg-6">
+                            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&h=400&fit=crop" alt="Legal Rights" class="w-100 h-100" style="object-fit: cover; min-height: 400px;">
+                        </div>
+                        <div class="col-lg-6 p-5 bg-light">
+                            <h3 class="text-warning fw-bold mb-3">⚖️ Legal Protection & Rights</h3>
+                            <p class="text-muted mb-4">Know your rights and access legal support. We connect women with legal aid services, information on protective orders, and guidance through the justice system.</p>
+                            <ul class="list-unstyled mb-4">
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Legal aid assistance</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Women's rights information</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Safe shelter coordination</li>
+                            </ul>
+                            <a href="{% url 'resources' %}" class="btn btn-warning">Learn Your Rights</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 5: Community Support -->
+                <div class="carousel-item">
+                    <div class="row align-items-center g-0">
+                        <div class="col-lg-6">
+                            <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=400&fit=crop" alt="Community" class="w-100 h-100" style="object-fit: cover; min-height: 400px;">
+                        </div>
+                        <div class="col-lg-6 p-5 bg-light">
+                            <h3 class="text-danger fw-bold mb-3">🤝 Community & Support</h3>
+                            <p class="text-muted mb-4">You are not alone. Join our supportive community of women, access peer support groups, and participate in empowerment activities that strengthen bonds and resilience.</p>
+                            <ul class="list-unstyled mb-4">
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Support groups & circles</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Community events</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Networking opportunities</li>
+                            </ul>
+                            <a href="{% url 'resources' %}" class="btn btn-danger">Get Involved</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carousel Controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#empowermentCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#empowermentCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5 fw-bold display-5">Core Services</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden transition" style="transition: all 0.3s ease;">
+                    <div class="bg-primary text-white p-4 text-center">
+                        <i class="fas fa-shield-alt fa-3x"></i>
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title fw-bold mb-3">Safe Reporting</h5>
+                        <p class="card-text text-muted">Anonymous and secure incident reporting with 24/7 support from PNP Women's Desks and DSWD.</p>
+                        <a href="{% url 'anonymous_report' %}" class="btn btn-primary">Report Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden transition" style="transition: all 0.3s ease;">
+                    <div class="bg-success text-white p-4 text-center">
+                        <i class="fas fa-graduation-cap fa-3x"></i>
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title fw-bold mb-3">Empowerment Programs</h5>
+                        <p class="card-text text-muted">Free livelihood training, skills development, and entrepreneurship programs for women.</p>
+                        <a href="{% url 'programs' %}" class="btn btn-success">View Programs</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden transition" style="transition: all 0.3s ease;">
+                    <div class="bg-info text-white p-4 text-center">
+                        <i class="fas fa-book fa-3x"></i>
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title fw-bold mb-3">Resources & Support</h5>
+                        <p class="card-text text-muted">Access legal information, service directories, counseling centers, and emergency shelters.</p>
+                        <a href="{% url 'resources' %}" class="btn btn-info">Get Help</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Success Stories -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <h2 class="text-center mb-5 fw-bold display-5">Success Stories</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm rounded-3 h-100 overflow-hidden transition" style="transition: all 0.3s ease;">
+                    <div class="card-body p-5">
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <blockquote class="blockquote">
+                            <p class="mb-3">"The platform helped me report safely and connect with the right support services. Today, I'm running my own business."</p>
+                            <footer class="blockquote-footer text-primary fw-bold">Maria*, Livelihood Program Graduate</footer>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm rounded-3 h-100 overflow-hidden transition" style="transition: all 0.3s ease;">
+                    <div class="card-body p-5">
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <blockquote class="blockquote">
+                            <p class="mb-3">"I was able to access legal aid and counseling through the resource directory. This platform truly empowers women."</p>
+                            <footer class="blockquote-footer text-success fw-bold">Ana*, Case Resolved</footer>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm rounded-3 h-100 overflow-hidden transition" style="transition: all 0.3s ease;">
+                    <div class="card-body p-5">
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <blockquote class="blockquote">
+                            <p class="mb-3">"The skills training program changed my life. I now have the confidence and tools to support my family."</p>
+                            <footer class="blockquote-footer text-info fw-bold">Rosa*, Skills Development Graduate</footer>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <small class="text-muted">*Names changed to protect privacy</small>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="py-5 bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+    <div class="container text-center">
+        <h3 class="fw-bold mb-3">Join Our Movement</h3>
+        <p class="lead mb-4">Together, we're creating a future where every woman can thrive, lead, and make her voice heard.</p>
+        <a href="{% url 'register' %}" class="btn btn-light btn-lg px-5">Get Started Today</a>
+    </div>
+</section>
+
+<!-- Newsletter Signup -->
+<section class="py-5 bg-light">
+    <div class="container text-center">
+        <h3 class="fw-bold mb-3">Stay Informed</h3>
+        <p class="mb-4 text-muted">Subscribe to receive updates on new programs, resources, and important announcements.</p>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form class="d-flex gap-2">
+                    <input type="email" class="form-control rounded-3" placeholder="Enter your email" required>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .stat-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    .carousel-indicators [data-bs-target] {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #667eea;
+    }
+    
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: rgba(102, 126, 234, 0.7);
+        padding: 15px;
+        border-radius: 50%;
+    }
+</style>
+{% endblock %}

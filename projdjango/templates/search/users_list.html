@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Search Users - BabaengBulacan{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/search.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="search-module">
+    {% include 'search/_header.html' with icon='fa-users' title='Registered Users' subtitle='Search accounts by name or email, then filter by role and verification status.' show_back=True total_count=total_count %}
+
+    <div class="container-xl pb-5">
+        <form method="get" class="search-filter-card">
+            <div class="search-filter-header">
+                <i class="fas fa-sliders-h"></i> Filters
+            </div>
+            <div class="search-filter-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-4 col-md-6">
+                        <label class="form-label" for="q">Keyword</label>
+                        <div class="search-input-wrap">
+                            <i class="fas fa-search search-input-icon"></i>
+                            <input type="text" class="form-control" id="q" name="q" value="{{ filters.q|default:'' }}" placeholder="Name or email…">
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-2">
+                        <label class="form-label">Role</label>
+                        <select class="form-select" name="role">
+                            <option value="">All roles</option>
+                            {% for val, label in user_roles %}
+                            <option value="{{ val }}" {% if filters.role == val %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-lg-2">
+                        <label class="form-label">Verification</label>
+                        <select class="form-select" name="verified">
+                            <option value="">All</option>
+                            {% for val, label in verified_choices %}
+                            <option value="{{ val }}" {% if filters.verified == val %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-lg-2">
+                        <label class="form-label">Account Status</label>
+                        <select class="form-select" name="account_status">
+                            <option value="">All</option>
+                            {% for val, label in account_status_choices %}
+                            <option value="{{ val }}" {% if filters.account_status == val %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="search-filter-actions">
+                            <button type="submit" class="btn btn-search"><i class="fas fa-search me-1"></i>Search</button>
+                            <a href="{% url 'search_users' %}" class="btn-reset">Reset</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="search-results-card">
+            <div class="search-results-header">
+                <span><i class="fas fa-users me-1"></i> Results</span>
+                <span class="text-muted fw-normal">{{ total_count }} total</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table search-table mb-0">
+                    <thead>
+                        <tr><th>Name</th><th>Email</th><th>Role</th><th>Verified</th><th>Status</th><th>Registered</th></tr>
+                    </thead>
+                    <tbody>
+                    {% for u in page_obj %}
+                        <tr>
+                            <td><strong>{{ u.get_full_name|default:u.username }}</strong></td>
+                            <td>{{ u.email }}</td>
+                            <td>
+                                {% if u.is_superuser %}
+                                <span class="search-badge search-badge-primary">Super Admin</span>
+                                {% elif u.is_staff %}
+                                <span class="search-badge search-badge-info">Admin</span>
+                                {% else %}
+                                <span class="search-badge search-badge-muted">Resident</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if u.userprofile.email_verified %}
+                                <span class="search-badge search-badge-success">Verified</span>
+                                {% else %}
+                                <span class="search-badge search-badge-warning">Unverified</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if not u.is_active %}
+                                <span class="search-badge search-badge-muted">Inactive</span>
+                                {% elif u.userprofile.is_locked_out %}
+                                <span class="search-badge search-badge-danger">Locked</span>
+                                {% else %}
+                                <span class="search-badge search-badge-success">Active</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-muted">{{ u.date_joined|date:"M j, Y" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="6">{% include 'search/_empty_state.html' with icon='fa-users' title='No users match' %}</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% include 'search/_pagination.html' %}
+    </div>
+</div>
+{% endblock %}

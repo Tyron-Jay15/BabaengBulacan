@@ -1,0 +1,131 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content_title %}<h1>Authentication Security Management</h1>{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a> &rsaquo; Security Dashboard
+</div>
+{% endblock %}
+
+{% block content %}
+<style>
+    .sec-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin:18px 0 28px; }
+    .sec-card { background:#fff; border:1px solid #e6e0f2; border-left:5px solid #7B2CBF; border-radius:10px; padding:18px; }
+    .sec-card .num { font-size:30px; font-weight:700; color:#3d3457; line-height:1; }
+    .sec-card .lbl { color:#6f6890; font-size:13px; margin-top:6px; }
+    .sec-card.warn { border-left-color:#d9822b; }
+    .sec-card.danger { border-left-color:#c0392b; }
+    .sec-card.ok { border-left-color:#2e9e5b; }
+    .sec-section { background:#fff; border:1px solid #e6e0f2; border-radius:10px; padding:0; margin-bottom:26px; overflow:hidden; }
+    .sec-section h2 { margin:0; padding:14px 18px; background:#f7f4fc; font-size:15px; color:#3d3457; border-bottom:1px solid #ece6f7; }
+    table.sec { width:100%; border-collapse:collapse; font-size:13px; }
+    table.sec th, table.sec td { text-align:left; padding:9px 14px; border-bottom:1px solid #f0ecf8; }
+    table.sec th { background:#faf8fe; color:#6f6890; font-weight:600; }
+    .tag { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; }
+    .tag.success { background:#e3f6ea; color:#1e7e44; }
+    .tag.fail { background:#fbe3e3; color:#b02a37; }
+    .empty { padding:18px; color:#9b94b3; }
+    .bar { height:8px; background:#eee6f7; border-radius:6px; overflow:hidden; margin-top:8px; }
+    .bar > span { display:block; height:100%; background:linear-gradient(90deg,#7B2CBF,#5a189a); }
+</style>
+
+<div class="sec-grid">
+    <div class="sec-card"><div class="num">{{ total_users }}</div><div class="lbl">Registered users</div></div>
+    <div class="sec-card ok">
+        <div class="num">{{ verified_users }}</div><div class="lbl">Verified accounts ({{ verified_pct }}%)</div>
+        <div class="bar"><span style="width:{{ verified_pct }}%"></span></div>
+    </div>
+    <div class="sec-card">
+        <div class="num">{{ twofa_users }}</div><div class="lbl">2FA enabled ({{ twofa_pct }}%)</div>
+        <div class="bar"><span style="width:{{ twofa_pct }}%"></span></div>
+    </div>
+    <div class="sec-card {% if locked_count %}danger{% endif %}"><div class="num">{{ locked_count }}</div><div class="lbl">Locked accounts</div></div>
+    <div class="sec-card {% if failed_24h %}warn{% endif %}"><div class="num">{{ failed_24h }}</div><div class="lbl">Failed logins (24h)</div></div>
+    <div class="sec-card ok"><div class="num">{{ logins_24h }}</div><div class="lbl">Successful logins (24h)</div></div>
+    <div class="sec-card"><div class="num">{{ new_devices_7d }}</div><div class="lbl">New devices (7d)</div></div>
+    <div class="sec-card warn"><div class="num">{{ unverified_users }}</div><div class="lbl">Unverified accounts</div></div>
+</div>
+
+{% if suspicious_ips %}
+<div class="sec-section">
+    <h2>⚠️ Suspicious activity — IPs with 5+ failed attempts (last 24h)</h2>
+    <table class="sec">
+        <thead><tr><th>IP address</th><th>Failed attempts</th></tr></thead>
+        <tbody>
+        {% for row in suspicious_ips %}
+            <tr><td>{{ row.ip_address|default:"Unknown" }}</td><td>{{ row.attempts }}</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<div class="sec-section">
+    <h2>Locked accounts</h2>
+    {% if locked_profiles %}
+    <table class="sec">
+        <thead><tr><th>User</th><th>Email</th><th>Failed attempts</th><th>Locked until</th><th>Action</th></tr></thead>
+        <tbody>
+        {% for p in locked_profiles %}
+            <tr>
+                <td>{{ p.user.username }}</td>
+                <td>{{ p.user.email }}</td>
+                <td>{{ p.login_attempts }}</td>
+                <td>{{ p.lockout_until }}</td>
+                <td><a href="{% url 'admin:projdjango_userprofile_change' p.id %}">Manage</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}<div class="empty">No accounts are currently locked. 🎉</div>{% endif %}
+</div>
+
+<div class="sec-section">
+    <h2>Recent authentication activity</h2>
+    <table class="sec">
+        <thead><tr><th>Time</th><th>Event</th><th>User</th><th>Method</th><th>IP</th><th>Device</th><th>Status</th></tr></thead>
+        <tbody>
+        {% for log in recent_logs %}
+            <tr>
+                <td>{{ log.created_at|date:"M j, H:i" }}</td>
+                <td>{{ log.get_event_type_display }}</td>
+                <td>{{ log.user.username|default:log.username_attempted|default:"—" }}</td>
+                <td>{{ log.auth_method|default:"—" }}</td>
+                <td>{{ log.ip_address|default:"—" }}</td>
+                <td>{{ log.browser }} / {{ log.os }}</td>
+                <td>{% if log.success %}<span class="tag success">OK</span>{% else %}<span class="tag fail">FAIL</span>{% endif %}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="7" class="empty">No activity recorded yet.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="sec-section">
+    <h2>Recent failed login attempts</h2>
+    <table class="sec">
+        <thead><tr><th>Time</th><th>Attempted username</th><th>IP</th><th>Reason</th></tr></thead>
+        <tbody>
+        {% for f in recent_failures %}
+            <tr>
+                <td>{{ f.created_at|date:"M j, H:i" }}</td>
+                <td>{{ f.username_attempted|default:"—" }}</td>
+                <td>{{ f.ip_address|default:"—" }}</td>
+                <td>{{ f.reason|default:"—" }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="4" class="empty">No failed attempts recorded.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<p style="margin-top:20px;">
+    <a class="button" href="{% url 'admin:projdjango_authenticationlog_changelist' %}">View full authentication log</a>
+    <a class="button" href="{% url 'admin:projdjango_userprofile_changelist' %}">Manage user profiles</a>
+    <a class="button" href="{% url 'admin:projdjango_twofactorauth_changelist' %}">Manage 2FA</a>
+</p>
+{% endblock %}

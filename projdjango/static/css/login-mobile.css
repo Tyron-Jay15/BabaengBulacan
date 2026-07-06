@@ -1,0 +1,51 @@
+/* Login page — mobile reCAPTCHA, camera, touch targets */
+
+.recaptcha-mobile-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0.25rem 0;
+}
+
+.recaptcha-mobile-wrap .g-recaptcha {
+    transform-origin: center top;
+}
+
+@media (max-width: 399px) {
+    .recaptcha-mobile-wrap.recaptcha-compact .g-recaptcha {
+        transform: scale(0.88);
+        margin-bottom: -0.5rem;
+    }
+}
+
+@media (max-width: 340px) {
+    .recaptcha-mobile-wrap.recaptcha-compact .g-recaptcha {
+        transform: scale(0.78);
+        margin-bottom: -1rem;
+    }
+}
+
+.face-video-wrap {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.face-video {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    max-height: 240px;
+    object-fit: cover;
+    background: #000;
+}
+
+.face-verify-box .btn {
+    min-height: 44px;
+}
+
+#skipFaceBtn {
+    font-weight: 600;
+}

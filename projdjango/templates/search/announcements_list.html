@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Search Announcements - BabaengBulacan{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/search.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="search-module">
+    {% include 'search/_header.html' with icon='fa-bullhorn' title='Announcements' subtitle='Browse community announcements and programs. Search by title, category, or date.' show_back=is_staff total_count=total_count %}
+
+    <div class="container-xl pb-5">
+        <form method="get" class="search-filter-card">
+            <div class="search-filter-header">
+                <i class="fas fa-sliders-h"></i> Filters
+            </div>
+            <div class="search-filter-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-4 col-md-6">
+                        <label class="form-label">Keyword</label>
+                        <div class="search-input-wrap">
+                            <i class="fas fa-search search-input-icon"></i>
+                            <input type="text" class="form-control" name="q" value="{{ filters.q|default:'' }}" placeholder="Title or content…">
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-2">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" name="category">
+                            <option value="">All categories</option>
+                            {% for val, label in announcement_categories %}
+                            <option value="{{ val }}" {% if filters.category == val %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-lg-2">
+                        <label class="form-label">Month</label>
+                        <select class="form-select" name="month">
+                            <option value="">Any month</option>
+                            <option value="1" {% if filters.month == "1" %}selected{% endif %}>January</option>
+                            <option value="2" {% if filters.month == "2" %}selected{% endif %}>February</option>
+                            <option value="3" {% if filters.month == "3" %}selected{% endif %}>March</option>
+                            <option value="4" {% if filters.month == "4" %}selected{% endif %}>April</option>
+                            <option value="5" {% if filters.month == "5" %}selected{% endif %}>May</option>
+                            <option value="6" {% if filters.month == "6" %}selected{% endif %}>June</option>
+                            <option value="7" {% if filters.month == "7" %}selected{% endif %}>July</option>
+                            <option value="8" {% if filters.month == "8" %}selected{% endif %}>August</option>
+                            <option value="9" {% if filters.month == "9" %}selected{% endif %}>September</option>
+                            <option value="10" {% if filters.month == "10" %}selected{% endif %}>October</option>
+                            <option value="11" {% if filters.month == "11" %}selected{% endif %}>November</option>
+                            <option value="12" {% if filters.month == "12" %}selected{% endif %}>December</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-lg-2">
+                        <label class="form-label">Year</label>
+                        <input type="number" class="form-control" name="year" value="{{ filters.year|default:'' }}" placeholder="2026" min="2020">
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="search-filter-actions">
+                            <button type="submit" class="btn btn-search"><i class="fas fa-search me-1"></i>Search</button>
+                            <a href="{% url 'search_announcements' %}" class="btn-reset">Reset</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="row g-4">
+        {% for a in page_obj %}
+            <div class="col-md-6">
+                <article class="search-announcement-card">
+                    <div class="search-announcement-card-top"></div>
+                    <div class="search-announcement-card-body">
+                        <div class="d-flex flex-wrap gap-2 mb-1">
+                            <span class="search-badge search-badge-primary">{{ a.get_category_display }}</span>
+                            {% if is_staff and not a.is_published %}<span class="search-badge search-badge-warning">Draft</span>{% endif %}
+                        </div>
+                        <h5>{{ a.title }}</h5>
+                        <p class="text-muted small mb-3">{{ a.description|truncatewords:40 }}</p>
+                        <p class="card-meta"><i class="far fa-calendar-alt me-1"></i> Posted {{ a.created_at|date:"M j, Y" }}</p>
+                    </div>
+                </article>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="search-results-card">
+                    {% include 'search/_empty_state.html' with icon='fa-bullhorn' title='No announcements match' %}
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+
+        {% include 'search/_pagination.html' %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Search & Filter Hub - BabaengBulacan{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/search.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="search-hub-page">
+    <section class="search-hub-hero">
+        <div class="container-xl">
+            <h1><i class="fas fa-search me-2"></i>Search &amp; Filter Hub</h1>
+            <p>Find incidents, users, announcements, and location data across BabaengBulacan — fast search, smart filters, and paginated results.</p>
+        </div>
+    </section>
+
+    <div class="container-xl search-hub-grid">
+        <div class="row g-4">
+            {% for item in modules %}
+            <div class="col-md-6 col-lg-4">
+                <article class="search-hub-card">
+                    <div class="search-hub-card-accent"></div>
+                    <div class="search-hub-card-body">
+                        <div class="search-hub-card-icon">
+                            <i class="fas {{ item.icon }}"></i>
+                        </div>
+                        <h5>{{ item.title }}</h5>
+                        <p>{{ item.desc }}</p>
+                        <a href="{% url item.url %}" class="btn-open">
+                            Open search <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

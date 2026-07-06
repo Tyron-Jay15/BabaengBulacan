@@ -1,0 +1,10 @@
+{% extends 'emails/base_email.html' %}
+{% block subject %}Your email has been verified{% endblock %}
+{% block preheader %}Your account is now active.{% endblock %}
+{% block content %}
+<h1 style="margin:0 0 14px 0; font-size:21px; color:#3d3457;">Email verified ✅</h1>
+<p style="margin:0 0 14px 0;">Great news{% if user.first_name %}, {{ user.first_name }}{% endif %}! Your email address has been successfully verified and your {{ site_name }} account is now active.</p>
+<p style="margin:0 0 14px 0;">You can now sign in and access all features. For extra protection, we recommend enabling two-factor authentication from your profile settings.</p>
+
+{% include 'emails/_button.html' with url=login_link label="Sign in to my account" %}
+{% endblock %}

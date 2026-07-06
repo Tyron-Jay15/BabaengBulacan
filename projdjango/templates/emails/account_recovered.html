@@ -1,0 +1,13 @@
+{% extends 'emails/base_email.html' %}
+{% block subject %}Your account was successfully recovered{% endblock %}
+{% block preheader %}Access to your account has been restored.{% endblock %}
+{% block content %}
+<h1 style="margin:0 0 14px 0; font-size:21px; color:#3d3457;">Account recovered ✅</h1>
+<p style="margin:0 0 14px 0;">Access to your {{ site_name }} account has been successfully restored{% if user.first_name %}, {{ user.first_name }}{% endif %}.</p>
+
+{% include 'emails/_meta.html' %}
+
+<p style="margin:0 0 14px 0;">For your security, we recommend reviewing your recent login activity and enabling two-factor authentication if you haven't already.</p>
+
+{% include 'emails/_button.html' with url=login_link label="Sign in to my account" %}
+{% endblock %}

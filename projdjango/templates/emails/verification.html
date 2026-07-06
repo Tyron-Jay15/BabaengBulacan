@@ -1,0 +1,26 @@
+{% extends 'emails/base_email.html' %}
+{% block subject %}Verify your {{ site_name }} account{% endblock %}
+{% block preheader %}Confirm your email address to activate your account.{% endblock %}
+{% block content %}
+<h1 style="margin:0 0 14px 0; font-size:21px; color:#3d3457;">Welcome{% if user.first_name %}, {{ user.first_name }}{% endif %}!</h1>
+<p style="margin:0 0 16px 0;">Thank you for registering with <strong>{{ site_name }}</strong>. To keep your account secure, please confirm your email address before signing in.</p>
+
+<p style="margin:0 0 16px 0; padding:14px 16px; background-color:#f5f0fb; border:1px solid #d8c9ef; border-radius:8px; font-size:14px; line-height:1.5;">
+    <strong style="color:#4a1775; display:block; margin-bottom:6px;">Your verification link</strong>
+    <a href="{{ verify_link }}" style="color:#7B2CBF !important; font-weight:600; word-break:break-all;">{{ verify_link }}</a>
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px 0; background-color:#faf8ff; border:1px dashed #c4b5fd; border-radius:8px;">
+    <tr>
+        <td style="padding:12px 16px; font-family:Consolas,Monaco,'Courier New',monospace; font-size:13px; color:#4a1775; word-break:break-all;">
+            {{ verify_link }}
+        </td>
+    </tr>
+</table>
+
+{% include 'emails/_button.html' with url=verify_link label="Verify my email" %}
+
+<p style="margin:0 0 8px 0; font-size:13px; color:#5a5370;">This link expires in {{ expires_hours }} hours. If the button above is blank or does not work, use the link in the purple box.</p>
+
+<p style="margin:0; font-size:13px; color:#8a82a3;">If you didn't create this account, please ignore this email.</p>
+{% endblock %}

@@ -1,0 +1,36 @@
+from django.urls import path
+from .views import (
+    LoginView,
+    AdminLoginView,
+    RegisterView,
+    LogoutView,
+    ForgotPasswordView,
+    ResetPasswordView,
+    profile_view,
+    verify_email,
+    resend_verification,
+    two_factor_setup,
+    two_factor_enable,
+    two_factor_disable,
+    backup_codes_regenerate,
+    backup_codes_download,
+    TwoFactorVerifyView,
+)
+
+urlpatterns = [
+    path('login/', LoginView.as_view(), name='login'),
+    path('admin/login/', AdminLoginView.as_view(), name='admin_login'),
+    path('register/', RegisterView.as_view(), name='register'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('forgot-password/', ForgotPasswordView.as_view(), name='forgot_password'),
+    path('reset-password/<str:token>/', ResetPasswordView.as_view(), name='reset_password'),
+    path('profile/', profile_view, name='profile'),
+    path('verify-email/<str:token>/', verify_email, name='verify_email'),
+    path('resend-verification/', resend_verification, name='resend_verification'),
+    path('two-factor/verify/', TwoFactorVerifyView.as_view(), name='two_factor_verify'),
+    path('two-factor/setup/', two_factor_setup, name='two_factor_setup'),
+    path('two-factor/enable/', two_factor_enable, name='two_factor_enable'),
+    path('two-factor/disable/', two_factor_disable, name='two_factor_disable'),
+    path('backup-codes/regenerate/', backup_codes_regenerate, name='backup_codes_regenerate'),
+    path('backup-codes/download/', backup_codes_download, name='backup_codes_download'),
+]

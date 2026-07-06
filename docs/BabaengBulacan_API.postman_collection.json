@@ -1,0 +1,162 @@
+{
+  "info": {
+    "name": "BabaengBulacan API (Activity 9)",
+    "description": "REST API collection for the BabaengBulacan Women Empowerment & Incident Reporting System.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000" }
+  ],
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/users/"
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/users/1/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Incidents",
+      "item": [
+        {
+          "name": "List Incidents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/incidents/"
+          }
+        },
+        {
+          "name": "Filter by Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/incidents/?status=submitted"
+          }
+        },
+        {
+          "name": "Create Incident (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Maria Santos\",\n  \"email\": \"maria@example.com\",\n  \"contact_number\": \"09171234567\",\n  \"incident_type\": \"violence\",\n  \"incident_description\": \"Incident reported via Postman API test.\",\n  \"incident_location\": \"San Jose, Bulakan\",\n  \"incident_date\": \"2026-06-30T10:00:00Z\",\n  \"barangay\": 1\n}"
+            },
+            "url": "{{base_url}}/api/incidents/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Announcements",
+      "item": [
+        {
+          "name": "List Announcements",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/announcements/"
+          }
+        },
+        {
+          "name": "Create Announcement (Staff POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                { "key": "username", "value": "admin", "type": "string" },
+                { "key": "password", "value": "your_password", "type": "string" }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Women's Rights Seminar\",\n  \"description\": \"Join us for a free seminar on RA 9262 and legal protections.\",\n  \"is_published\": true\n}"
+            },
+            "url": "{{base_url}}/api/announcements/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Municipalities",
+      "item": [
+        {
+          "name": "List Municipalities",
+          "request": { "method": "GET", "url": "{{base_url}}/api/municipalities/" }
+        }
+      ]
+    },
+    {
+      "name": "Barangays",
+      "item": [
+        {
+          "name": "List Barangays",
+          "request": { "method": "GET", "url": "{{base_url}}/api/barangays/" }
+        },
+        {
+          "name": "Filter by Municipality",
+          "request": { "method": "GET", "url": "{{base_url}}/api/barangays/?municipality=1" }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "List My Notifications",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                { "key": "username", "value": "user@example.com", "type": "string" },
+                { "key": "password", "value": "password", "type": "string" }
+              ]
+            },
+            "url": "{{base_url}}/api/notifications/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth Logs (Staff)",
+      "item": [
+        {
+          "name": "List Authentication Logs",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                { "key": "username", "value": "admin", "type": "string" },
+                { "key": "password", "value": "your_password", "type": "string" }
+              ]
+            },
+            "url": "{{base_url}}/api/auth-logs/"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,426 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+{% block title %}Admin Dashboard - BabaengBulacan{% endblock %}
+
+{% block admin_extra_css %}
+<link href="{% static 'css/search.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block admin_hero %}
+<div class="admin-dash-hero">
+    <div class="container-xl">
+        <h1><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h1>
+        <p>Manage incident reports, users, and announcements — search, filter, and paginate system data.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block admin_content %}
+    <div class="container-xl">
+        {% include 'components/alerts.html' %}
+
+        <!-- KPI Summary Cards -->
+        <div class="admin-stat-grid">
+            <a href="{% url 'admin_dashboard' %}#users" class="admin-stat-card" title="View all registered users">
+                <div class="stat-icon stat-icon-purple"><i class="fas fa-users"></i></div>
+                <div class="stat-value">{{ stats.total_users }}</div>
+                <div class="stat-label">Registered Users</div>
+            </a>
+            <a href="{% url 'admin_dashboard' %}#incidents" class="admin-stat-card" title="View all incident reports">
+                <div class="stat-icon stat-icon-blue"><i class="fas fa-file-alt"></i></div>
+                <div class="stat-value">{{ stats.total_incidents }}</div>
+                <div class="stat-label">Incident Reports</div>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?inc_status=submitted#incidents" class="admin-stat-card" title="View pending incident reports">
+                <div class="stat-icon stat-icon-yellow"><i class="fas fa-clock"></i></div>
+                <div class="stat-value">{{ stats.pending_reports }}</div>
+                <div class="stat-label">Pending Reports</div>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?inc_status=under_review#incidents" class="admin-stat-card" title="View ongoing incident reports">
+                <div class="stat-icon stat-icon-orange"><i class="fas fa-search"></i></div>
+                <div class="stat-value">{{ stats.ongoing_reports }}</div>
+                <div class="stat-label">Ongoing Reports</div>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?inc_status=resolved#incidents" class="admin-stat-card" title="View resolved incident reports">
+                <div class="stat-icon stat-icon-green"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-value">{{ stats.resolved_reports }}</div>
+                <div class="stat-label">Resolved Reports</div>
+            </a>
+            <a href="{% url 'admin_dashboard' %}#announcements" class="admin-stat-card" title="View all announcements">
+                <div class="stat-icon stat-icon-purple"><i class="fas fa-bullhorn"></i></div>
+                <div class="stat-value">{{ stats.total_announcements }}</div>
+                <div class="stat-label">Announcements</div>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?usr_verified=yes#users" class="admin-stat-card" title="View approved users">
+                <div class="stat-icon stat-icon-green"><i class="fas fa-user-check"></i></div>
+                <div class="stat-value">{{ stats.verified_users }}</div>
+                <div class="stat-label">Verified Users</div>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?usr_verified=no#users" class="admin-stat-card" title="View users awaiting approval">
+                <div class="stat-icon stat-icon-yellow"><i class="fas fa-user-clock"></i></div>
+                <div class="stat-value">{{ stats.unverified_users }}</div>
+                <div class="stat-label">Unverified Users</div>
+            </a>
+        </div>
+
+        <!-- INCIDENT REPORTS -->
+        <section class="admin-section" id="incidents">
+            <div class="admin-section-header">
+                <h2><i class="fas fa-file-alt"></i> Incident Reports</h2>
+                <span class="badge bg-light text-dark">{{ inc_total }} total</span>
+            </div>
+            <div class="admin-section-body">
+                <form method="get" class="admin-filter-form mb-4" data-loading>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-lg-3 col-md-6">
+                            <label class="form-label">Search</label>
+                            <input type="text" class="form-control" name="inc_q" value="{{ inc_filters.inc_q|default:'' }}"
+                                   placeholder="Reporter, type, barangay…">
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="inc_status">
+                                <option value="">All</option>
+                                {% for val, label in incident_statuses %}
+                                <option value="{{ val }}" {% if inc_filters.inc_status == val %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <label class="form-label">Type</label>
+                            <select class="form-select" name="inc_type">
+                                <option value="">All</option>
+                                {% for val, label in incident_types %}
+                                <option value="{{ val }}" {% if inc_filters.inc_type == val %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <label class="form-label">Barangay</label>
+                            <select class="form-select" name="inc_barangay">
+                                <option value="">All</option>
+                                {% for b in barangays %}
+                                <option value="{{ b.id }}" {% if inc_filters.inc_barangay == b.id|stringformat:"s" %}selected{% endif %}>{{ b.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <label class="form-label">Municipality</label>
+                            <select class="form-select" name="inc_municipality">
+                                <option value="">All</option>
+                                {% for m in municipalities %}
+                                <option value="{{ m.id }}" {% if inc_filters.inc_municipality == m.id|stringformat:"s" %}selected{% endif %}>{{ m.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <label class="form-label">Date from</label>
+                            <input type="date" class="form-control" name="inc_date_from" value="{{ inc_filters.inc_date_from|default:'' }}">
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <label class="form-label">Date to</label>
+                            <input type="date" class="form-control" name="inc_date_to" value="{{ inc_filters.inc_date_to|default:'' }}">
+                        </div>
+                        <div class="col-lg-3 col-md-6 d-flex gap-2">
+                            <button type="submit" class="admin-btn-search"><i class="fas fa-search me-1"></i>Search</button>
+                            <a href="{% url 'admin_dashboard' %}#incidents" class="admin-btn-reset">Reset</a>
+                        </div>
+                    </div>
+                </form>
+                <div class="admin-loading-bar"></div>
+
+                <div class="table-responsive">
+                    <table class="table admin-table">
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Reporter</th>
+                                <th>Type</th>
+                                <th>Barangay</th>
+                                <th>Municipality</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Officer</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for r in inc_page %}
+                            <tr>
+                                <td><code class="small">{{ r.report_id|truncatechars:10 }}</code></td>
+                                <td><strong>{{ r.full_name }}</strong></td>
+                                <td>{{ r.get_incident_type_display_label }}</td>
+                                <td>{{ r.barangay.name|default:"—" }}</td>
+                                <td>{% if r.barangay %}{{ r.barangay.municipality.name }}{% else %}—{% endif %}</td>
+                                <td class="text-muted">{{ r.created_at|date:"M j, Y" }}</td>
+                                <td><span class="search-badge search-badge-muted">{{ r.get_status_display_label }}</span></td>
+                                <td>{% if r.assigned_officer %}{{ r.assigned_officer.get_full_name|default:r.assigned_officer.username }}{% else %}—{% endif %}</td>
+                                <td>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <a href="{% url 'admin_incident_detail' r.report_id %}" class="btn btn-sm btn-outline-primary admin-action-btn" title="View"><i class="fas fa-eye"></i></a>
+                                        <a href="{% url 'admin_incident_edit' r.report_id %}" class="btn btn-sm btn-outline-secondary admin-action-btn" title="Edit"><i class="fas fa-edit"></i></a>
+                                        <form method="post" action="{% url 'admin_incident_status' r.report_id %}" class="admin-status-form">
+                                            {% csrf_token %}
+                                            <select name="status" class="form-select form-select-sm">
+                                                {% for val, label in incident_statuses %}
+                                                <option value="{{ val }}" {% if r.status == val %}selected{% endif %}>{{ label }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit" class="btn btn-sm btn-primary admin-action-btn" title="Update Status"><i class="fas fa-sync-alt"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="9">{% include 'search/_empty_state.html' with icon='fa-file-alt' title='No incident reports match' %}</td></tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% include 'admin_dashboard/_pagination.html' with page_obj=inc_page paginator=inc_paginator total_count=inc_total query_string=inc_query_string page_param='inc_page' %}
+            </div>
+        </section>
+
+        <!-- REGISTERED USERS -->
+        <section class="admin-section" id="users">
+            <div class="admin-section-header">
+                <h2><i class="fas fa-users"></i> Registered Users</h2>
+                <span class="badge bg-light text-dark">{{ usr_total }} total</span>
+            </div>
+            {% if stats.unverified_users %}
+            <div class="alert alert-warning mx-3 mt-3 mb-0 d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <span>
+                    <i class="fas fa-user-clock me-2"></i>
+                    <strong>{{ stats.unverified_users }}</strong> account{{ stats.unverified_users|pluralize }} awaiting your approval
+                    — review the face photo, then click <strong>Approve</strong>.
+                </span>
+                <a href="{% url 'admin_dashboard' %}?usr_verified=no#users" class="btn btn-sm btn-warning">
+                    Show pending only
+                </a>
+            </div>
+            {% endif %}
+            <div class="admin-section-body">
+                <form method="get" class="admin-filter-form mb-4" data-loading>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-lg-4 col-md-6">
+                            <label class="form-label">Search</label>
+                            <input type="text" class="form-control" name="usr_q" value="{{ usr_filters.usr_q|default:'' }}" placeholder="Name or email…">
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <label class="form-label">Role</label>
+                            <select class="form-select" name="usr_role">
+                                <option value="">All</option>
+                                {% for val, label in user_roles %}
+                                <option value="{{ val }}" {% if usr_filters.usr_role == val %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <label class="form-label">Verification</label>
+                            <select class="form-select" name="usr_verified">
+                                <option value="">All</option>
+                                {% for val, label in verified_choices %}
+                                <option value="{{ val }}" {% if usr_filters.usr_verified == val %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <label class="form-label">Account Status</label>
+                            <select class="form-select" name="usr_status">
+                                <option value="">All</option>
+                                {% for val, label in account_status_choices %}
+                                <option value="{{ val }}" {% if usr_filters.usr_status == val %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-lg-4 col-md-6 d-flex gap-2">
+                            <button type="submit" class="admin-btn-search"><i class="fas fa-search me-1"></i>Search</button>
+                            <a href="{% url 'admin_dashboard' %}#users" class="admin-btn-reset">Reset</a>
+                        </div>
+                    </div>
+                </form>
+                <div class="admin-loading-bar"></div>
+
+                <div class="table-responsive">
+                    <table class="table admin-table">
+                        <thead>
+                            <tr><th>Face</th><th>ID</th><th>Full Name</th><th>Email</th><th>Role</th><th>Verified</th><th>Status</th><th>Registered</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody>
+                        {% for u in usr_page %}
+                            <tr>
+                                <td>
+                                    {% if u.userprofile.face_photo %}
+                                    <button type="button" class="admin-face-thumb-btn" data-bs-toggle="modal" data-bs-target="#faceModal{{ u.id }}" title="View registered face">
+                                        <img src="{{ u.userprofile.face_photo.url }}" alt="" class="admin-face-thumb">
+                                    </button>
+                                    <div class="modal fade" id="faceModal{{ u.id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">{{ u.get_full_name|default:u.username }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img src="{{ u.userprofile.face_photo.url }}" alt="Registered face" class="admin-face-preview img-fluid rounded">
+                                                    <p class="text-muted small mt-2 mb-0">{{ u.email }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% elif u.face_enrolled %}
+                                    <span class="text-muted small" title="Encoding on file; photo not saved">No photo</span>
+                                    {% else %}
+                                    <span class="text-muted small">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ u.id }}</td>
+                                <td><strong>{{ u.get_full_name|default:u.username }}</strong></td>
+                                <td>{{ u.email }}</td>
+                                <td>
+                                    {% if u.is_superuser %}<span class="search-badge search-badge-primary">Super Admin</span>
+                                    {% elif u.is_staff %}<span class="search-badge search-badge-info">Admin</span>
+                                    {% else %}<span class="search-badge search-badge-muted">Resident</span>{% endif %}
+                                </td>
+                                <td>{% if u.userprofile.email_verified %}<span class="search-badge search-badge-success">Yes</span>{% else %}<span class="search-badge search-badge-warning">No</span>{% endif %}</td>
+                                <td>
+                                    {% if not u.is_active %}Inactive
+                                    {% elif u.userprofile.is_locked_out %}Locked
+                                    {% else %}Active{% endif %}
+                                </td>
+                                <td class="text-muted">{{ u.date_joined|date:"M j, Y" }}</td>
+                                <td>
+                                    <div class="d-flex flex-wrap gap-1">
+                                    {% if not u.userprofile.email_verified %}
+                                    <form method="post" action="{% url 'admin_verify_user_email' u.id %}" class="d-inline"
+                                          onsubmit="return confirm('Approve account for {{ u.email|escapejs }}? They will be able to sign in.');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-success admin-action-btn" title="Approve account">
+                                            <i class="fas fa-check me-1"></i>Approve
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                    {% if u.id != request.user.id and not u.is_superuser %}
+                                        {% if u.is_staff and not request.user.is_superuser %}
+                                        {% else %}
+                                        <form method="post" action="{% url 'admin_delete_user' u.id %}" class="d-inline"
+                                              onsubmit="return confirm('Permanently delete account for {{ u.email|escapejs }}? This cannot be undone.');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger admin-action-btn" title="Delete account">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if u.userprofile.email_verified and u.id == request.user.id %}
+                                    <span class="text-muted small">—</span>
+                                    {% elif u.is_superuser and u.id != request.user.id %}
+                                    <span class="text-muted small">—</span>
+                                    {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="9">{% include 'search/_empty_state.html' with icon='fa-users' title='No users match' %}</td></tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% include 'admin_dashboard/_pagination.html' with page_obj=usr_page paginator=usr_paginator total_count=usr_total query_string=usr_query_string page_param='usr_page' %}
+            </div>
+        </section>
+
+        <!-- ANNOUNCEMENTS -->
+        <section class="admin-section" id="announcements">
+            <div class="admin-section-header">
+                <h2><i class="fas fa-bullhorn"></i> Announcements</h2>
+                <span class="badge bg-light text-dark">{{ ann_total }} total</span>
+            </div>
+            <div class="admin-section-body">
+                <form method="get" class="admin-filter-form mb-4" data-loading>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-lg-4 col-md-6">
+                            <label class="form-label">Search</label>
+                            <input type="text" class="form-control" name="ann_q" value="{{ ann_filters.ann_q|default:'' }}" placeholder="Title or content…">
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" name="ann_category">
+                                <option value="">All</option>
+                                {% for val, label in announcement_categories %}
+                                <option value="{{ val }}" {% if ann_filters.ann_category == val %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <label class="form-label">Month</label>
+                            <select class="form-select" name="ann_month">
+                                <option value="">Any</option>
+                                <option value="1" {% if ann_filters.ann_month == "1" %}selected{% endif %}>Jan</option>
+                                <option value="2" {% if ann_filters.ann_month == "2" %}selected{% endif %}>Feb</option>
+                                <option value="3" {% if ann_filters.ann_month == "3" %}selected{% endif %}>Mar</option>
+                                <option value="4" {% if ann_filters.ann_month == "4" %}selected{% endif %}>Apr</option>
+                                <option value="5" {% if ann_filters.ann_month == "5" %}selected{% endif %}>May</option>
+                                <option value="6" {% if ann_filters.ann_month == "6" %}selected{% endif %}>Jun</option>
+                                <option value="7" {% if ann_filters.ann_month == "7" %}selected{% endif %}>Jul</option>
+                                <option value="8" {% if ann_filters.ann_month == "8" %}selected{% endif %}>Aug</option>
+                                <option value="9" {% if ann_filters.ann_month == "9" %}selected{% endif %}>Sep</option>
+                                <option value="10" {% if ann_filters.ann_month == "10" %}selected{% endif %}>Oct</option>
+                                <option value="11" {% if ann_filters.ann_month == "11" %}selected{% endif %}>Nov</option>
+                                <option value="12" {% if ann_filters.ann_month == "12" %}selected{% endif %}>Dec</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <label class="form-label">Year</label>
+                            <input type="number" class="form-control" name="ann_year" value="{{ ann_filters.ann_year|default:'' }}" placeholder="2026" min="2020">
+                        </div>
+                        <div class="col-lg-4 col-md-6 d-flex gap-2">
+                            <button type="submit" class="admin-btn-search"><i class="fas fa-search me-1"></i>Search</button>
+                            <a href="{% url 'admin_dashboard' %}#announcements" class="admin-btn-reset">Reset</a>
+                        </div>
+                    </div>
+                </form>
+                <div class="admin-loading-bar"></div>
+
+                <div class="table-responsive">
+                    <table class="table admin-table">
+                        <thead>
+                            <tr><th>Title</th><th>Category</th><th>Date Posted</th><th>Posted By</th><th>Published</th></tr>
+                        </thead>
+                        <tbody>
+                        {% for a in ann_page %}
+                            <tr>
+                                <td><strong>{{ a.title }}</strong></td>
+                                <td><span class="search-badge search-badge-primary">{{ a.get_category_display }}</span></td>
+                                <td class="text-muted">{{ a.created_at|date:"M j, Y" }}</td>
+                                <td>{% if a.posted_by %}{{ a.posted_by.get_full_name|default:a.posted_by.username }}{% else %}—{% endif %}</td>
+                                <td>{% if a.is_published %}<span class="search-badge search-badge-success">Yes</span>{% else %}<span class="search-badge search-badge-warning">Draft</span>{% endif %}</td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="5">{% include 'search/_empty_state.html' with icon='fa-bullhorn' title='No announcements match' %}</td></tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% include 'admin_dashboard/_pagination.html' with page_obj=ann_page paginator=ann_paginator total_count=ann_total query_string=ann_query_string page_param='ann_page' %}
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block admin_extra_js %}
+<script>
+document.querySelectorAll('.admin-filter-form[data-loading]').forEach(form => {
+    form.addEventListener('submit', () => form.classList.add('is-loading'));
+});
+
+if (window.location.hash) {
+    const target = document.querySelector(window.location.hash);
+    if (target) {
+        requestAnimationFrame(() => {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+}
+</script>
+{% endblock %}

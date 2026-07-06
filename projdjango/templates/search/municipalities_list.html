@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Search Municipalities - BabaengBulacan{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/search.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="search-module">
+    {% include 'search/_header.html' with icon='fa-city' title='Municipalities' subtitle='Browse and search municipalities in the province of Bulacan.' show_back=False total_count=total_count %}
+
+    <div class="container-xl pb-5">
+        <form method="get" class="search-filter-card">
+            <div class="search-filter-header">
+                <i class="fas fa-sliders-h"></i> Filters
+            </div>
+            <div class="search-filter-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-6 col-md-8">
+                        <label class="form-label">Keyword</label>
+                        <div class="search-input-wrap">
+                            <i class="fas fa-search search-input-icon"></i>
+                            <input type="text" class="form-control" name="q" value="{{ filters.q|default:'' }}" placeholder="Search municipality or province…">
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4">
+                        <div class="search-filter-actions">
+                            <button type="submit" class="btn btn-search"><i class="fas fa-search me-1"></i>Search</button>
+                            <a href="{% url 'search_municipalities' %}" class="btn-reset">Reset</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="search-results-card">
+            <div class="search-results-header">
+                <span><i class="fas fa-city me-1"></i> Results</span>
+                <span class="text-muted fw-normal">{{ total_count }} total</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table search-table mb-0">
+                    <thead><tr><th>Municipality</th><th>Province</th><th>Barangays</th></tr></thead>
+                    <tbody>
+                    {% for m in page_obj %}
+                        <tr>
+                            <td><strong>{{ m.name }}</strong></td>
+                            <td><span class="search-badge search-badge-muted">{{ m.province }}</span></td>
+                            <td><span class="search-badge search-badge-primary">{{ m.barangay_count }}</span></td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="3">{% include 'search/_empty_state.html' with icon='fa-city' title='No municipalities found' %}</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% include 'search/_pagination.html' %}
+    </div>
+</div>
+{% endblock %}

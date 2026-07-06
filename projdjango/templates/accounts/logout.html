@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Logged Out - BabaengBulacan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h2 class="card-title">You have been logged out</h2>
+                    <p class="text-muted">Thank you for using BabaengBulacan. You can log in again anytime.</p>
+                    <a href="{% url 'login' %}" class="btn btn-primary">Login Again</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

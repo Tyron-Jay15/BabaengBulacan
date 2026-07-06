@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Privacy Policy - BabaengBulacan{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <h1 class="mb-4">Privacy Policy</h1>
+        <p class="lead">Your privacy and safety matter. This policy describes how we collect, use, and protect your information.</p>
+
+        <h3 class="mt-5">Information We Collect</h3>
+        <ul>
+            <li>Anonymous incident reports (no personally identifying information required).</li>
+            <li>Optional account information (email, name) for registered users.</li>
+            <li>Cookies and usage data to improve performance and user experience.</li>
+        </ul>
+
+        <h3 class="mt-4">How We Use Your Information</h3>
+        <p>We use information to:</p>
+        <ul>
+            <li>Process and respond to reports.</li>
+            <li>Send important service-related notifications.</li>
+            <li>Protect your account and ensure platform security.</li>
+        </ul>
+
+        <h3 class="mt-4">Data Security</h3>
+        <p>We take reasonable measures to protect your information. However, no system is completely secure. Please use the safe exit button and clear your browser history if you are using a shared device.</p>
+
+        <h3 class="mt-4">Contact</h3>
+        <p>If you have questions about this policy, please <a href="{% url 'contact' %}">contact us</a>.</p>
+    </div>
+</section>
+{% endblock %}

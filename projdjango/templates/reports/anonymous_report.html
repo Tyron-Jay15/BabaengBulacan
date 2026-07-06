@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+{% block title %}Report Incident - BabaengBulacan{% endblock %}
+
+{% block extra_css %}
+<style>
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin-bottom: 40px;
+}
+
+.progress-steps::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 0;
+}
+
+.step {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    font-weight: bold;
+}
+
+.step.active .step-number {
+    background: #7B2CBF;
+    color: white;
+    border-color: #7B2CBF;
+}
+
+.step-label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.step.active .step-label {
+    color: #7B2CBF;
+    font-weight: bold;
+}
+
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+}
+
+.incident-types .form-check {
+    padding: 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    transition: all 0.3s;
+}
+
+.incident-types .form-check:hover {
+    border-color: #7B2CBF;
+    background: #f8f3ff;
+}
+
+.incident-types .form-check-input:checked + .form-check-label {
+    color: #7B2CBF;
+    font-weight: bold;
+}
+
+.incident-types .form-check-label {
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.incident-types .form-check-label i {
+    margin-right: 10px;
+    font-size: 1.3rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Progress Steps -->
+            <div class="progress-steps mb-4">
+                <div class="step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Incident Type</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Details</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Review</div>
+                </div>
+            </div>
+
+            <!-- Privacy Notice -->
+            <div class="alert alert-info">
+                <i class="fas fa-shield-alt"></i> Your identity will remain anonymous.
+                All information is encrypted and confidential.
+            </div>
+
+            <!-- Report Form -->
+            <form id="report-form" method="POST">
+                {% csrf_token %}
+
+                <!-- Step 1: Incident Type -->
+                <div class="form-step active" data-step="1">
+                    <h3>Select Incident Type</h3>
+                    <div class="incident-types">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="incident_type" id="physical" value="physical" required>
+                            <label class="form-check-label" for="physical">
+                                <i class="fas fa-hand-fist"></i> Physical Violence
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="incident_type" id="emotional" value="emotional">
+                            <label class="form-check-label" for="emotional">
+                                <i class="fas fa-heart-broken"></i> Emotional/Psychological Violence
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="incident_type" id="sexual" value="sexual">
+                            <label class="form-check-label" for="sexual">
+                                <i class="fas fa-user-shield"></i> Sexual Violence
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="incident_type" id="economic" value="economic">
+                            <label class="form-check-label" for="economic">
+                                <i class="fas fa-money-bill-wave"></i> Economic Abuse
+                            </label>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary mt-3" onclick="nextStep(2)">Next</button>
+                </div>
+
+                <!-- Step 2: Details -->
+                <div class="form-step" data-step="2">
+                    <h3>Incident Details</h3>
+
+                    <div class="mb-3">
+                        <label for="incident_date" class="form-label">When did this happen?</label>
+                        <input type="date" class="form-control" id="incident_date" name="incident_date" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="municipality" class="form-label">Municipality</label>
+                        <select class="form-select" id="municipality" name="municipality" required>
+                            <option value="">Select municipality</option>
+                            <option value="Malolos">Malolos</option>
+                            <option value="Meycauayan">Meycauayan</option>
+                            <option value="San Jose del Monte">San Jose del Monte</option>
+                            <!-- Add more municipalities -->
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="barangay" class="form-label">Barangay</label>
+                        <select class="form-select" id="barangay" name="barangay" required>
+                            <option value="">Select barangay</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Please describe what happened</label>
+                        <textarea class="form-control" id="description" name="description" rows="6"
+                                  placeholder="Tell us what happened..." required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="file_upload" class="form-label">Upload Evidence (Optional)</label>
+                        <input type="file" class="form-control" id="file_upload" name="evidence" multiple>
+                        <small class="text-muted">You can upload photos, documents, or other evidence</small>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(1)">Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(3)">Next</button>
+                </div>
+
+                <!-- Step 3: Review & Submit -->
+                <div class="form-step" data-step="3">
+                    <h3>Review Your Report</h3>
+                    <div id="review-content" class="card">
+                        <!-- Review content will be populated by JavaScript -->
+                    </div>
+
+                    <div class="form-check mt-3">
+                        <input class="form-check-input" type="checkbox" id="accept_terms" required>
+                        <label class="form-check-label" for="accept_terms">
+                            I understand that this report will be handled confidentially and
+                            I consent to the processing of this information.
+                        </label>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary mt-3" onclick="prevStep(2)">Back</button>
+                    <button type="submit" class="btn btn-success mt-3">
+                        <i class="fas fa-paper-plane"></i> Submit Report
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// Multi-step form logic
+function nextStep(step) {
+    // Validate current step
+    if (validateCurrentStep()) {
+        $('.form-step').removeClass('active');
+        $(`.form-step[data-step="${step}"]`).addClass('active');
+
+        $('.step').removeClass('active');
+        $(`.step[data-step="${step}"]`).addClass('active');
+
+        if (step === 3) {
+            populateReview();
+        }
+    }
+}
+
+function prevStep(step) {
+    $('.form-step').removeClass('active');
+    $(`.form-step[data-step="${step}"]`).addClass('active');
+
+    $('.step').removeClass('active');
+    $(`.step[data-step="${step}"]`).addClass('active');
+}
+
+function validateCurrentStep() {
+    // Add validation logic here
+    return true;
+}
+
+function populateReview() {
+    // Populate review section with form data
+    const formData = $('#report-form').serializeArray();
+    let reviewHTML = '<div class="card-body">';
+
+    formData.forEach(field => {
+        if (field.value) {
+            reviewHTML += `<p><strong>${field.name}:</strong> ${field.value}</p>`;
+        }
+    });
+
+    reviewHTML += '</div>';
+    $('#review-content').html(reviewHTML);
+}
+
+// Form submission
+$('#report-form').on('submit', function(e) {
+    e.preventDefault();
+
+    // Show loading
+    Swal.fire({
+        title: 'Submitting Report...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    // Submit via AJAX (placeholder - will integrate with backend)
+    setTimeout(() => {
+        Swal.fire({
+            icon: 'success',
+            title: 'Report Submitted Successfully',
+            html: `Your case number is: <strong>BB-2024-00001</strong><br>
+                   Please save this number for tracking.`,
+            confirmButtonText: 'OK'
+        }).then(() => {
+            window.location.href = '{% url "report_success" %}';
+        });
+    }, 2000);
+});
+</script>
+{% endblock %}
