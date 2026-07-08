@@ -61,6 +61,11 @@ logger = logging.getLogger(__name__)
 
 # Constants
 FACE_DISTANCE_THRESHOLD = 0.6
+
+
+def face_verification_supported() -> bool:
+    """True only when the server can actually run face matching."""
+    return FACE_RECOGNITION_AVAILABLE and CV2_AVAILABLE and NUMPY_AVAILABLE
 BUSINESS_HOURS_START = getattr(settings, 'BUSINESS_HOURS_START', 6)
 BUSINESS_HOURS_END = getattr(settings, 'BUSINESS_HOURS_END', 22)
 ALLOW_EMERGENCY_ACCESS = getattr(settings, 'ALLOW_EMERGENCY_ACCESS', True)
@@ -266,9 +271,9 @@ def verify_face(known_encoding: np.ndarray, image: np.ndarray) -> Tuple[bool, Op
     Returns:
         Tuple of (is_match, error_message).
     """
-    logger.debug(f"verify_face called with image: {image is not None}")
-    if image is not None:
-        logger.debug(f"Image shape: {image.shape}, dtype: {image.dtype}")
+    logger.debug("verify_face called with image: %s", image is not None)
+    if image is not None and hasattr(image, 'shape'):
+        logger.debug("Image shape: %s, dtype: %s", image.shape, getattr(image, 'dtype', None))
 
     if not FACE_RECOGNITION_AVAILABLE:
         # Mock implementation - always return success for demo
@@ -513,13 +518,19 @@ def complete_login(request, user, auth_method='password+face'):
     if not device_token:
         device_token = security.new_device_token()
         security.set_device_cookie(response, device_token)
-    security.remember_device(user, device_token, request)
+    try:
+        security.remember_device(user, device_token, request)
+    except Exception as exc:
+        logger.warning("Could not save known device (run migrate?): %s", exc)
 
     security.log_auth_event(request, 'login_success', user=user, auth_method=auth_method)
     if is_new_device:
         security.log_auth_event(request, 'new_device', user=user, auth_method=auth_method,
                                 details='Login from a new device/browser')
-        auth_emails.send_new_device_notification(user, request)
+        try:
+            auth_emails.send_new_device_notification(user, request)
+        except Exception as exc:
+            logger.warning("Could not send new-device email: %s", exc)
 
     return response
 
@@ -606,18 +617,21 @@ def _authenticate_login_portal(request, email, password, portal, template_name):
         )
 
     if not profile.email_verified:
-        security.log_auth_event(request, 'login_failed', user=user, success=False,
-                                details='Account not approved')
-        if _admin_verification_required():
+        if portal == 'admin' and _is_staff_account(user):
+            profile.mark_email_verified()
+        else:
+            security.log_auth_event(request, 'login_failed', user=user, success=False,
+                                    details='Account not approved')
+            if _admin_verification_required():
+                return fail(
+                    'Your account is pending administrator approval. '
+                    'You will be able to sign in after an admin verifies your registration.',
+                    pending_admin=True,
+                )
             return fail(
-                'Your account is pending administrator approval. '
-                'You will be able to sign in after an admin verifies your registration.',
-                pending_admin=True,
+                'Please verify your email address before signing in. Check your inbox for the verification link.',
+                show_resend=True,
             )
-        return fail(
-            'Please verify your email address before signing in. Check your inbox for the verification link.',
-            show_resend=True,
-        )
 
     return auth_user, profile, None
 
@@ -668,6 +682,10 @@ class LoginView(View):
         from projdjango.recaptcha_utils import is_mobile_lan_dev_access
 
         request = request or getattr(self, 'request', None)
+
+        if not face_verification_supported():
+            return None
+
         stored_encoding = profile.get_face_encoding()
         if not face_image:
             if (

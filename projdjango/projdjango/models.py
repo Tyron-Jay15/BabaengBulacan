@@ -37,7 +37,10 @@ class UserProfile(models.Model):
 
     def get_face_encoding(self):
         if self.face_encoding:
-            return pickle.loads(self.face_encoding)
+            try:
+                return pickle.loads(self.face_encoding)
+            except Exception:
+                return None
         return None
 
     def set_face_encoding(self, encoding):
@@ -130,8 +133,11 @@ class UserProfile(models.Model):
     @property
     def has_2fa_enabled(self):
         """Whether the user has confirmed/active TOTP two-factor auth."""
-        twofa = getattr(self.user, 'two_factor', None)
-        return bool(twofa and twofa.is_enabled)
+        try:
+            twofa = getattr(self.user, 'two_factor', None)
+            return bool(twofa and twofa.is_enabled)
+        except Exception:
+            return False
 
 
 class ChatHistory(models.Model):
