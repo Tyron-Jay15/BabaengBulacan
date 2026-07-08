@@ -679,25 +679,14 @@ class LoginView(View):
 
     def _verify_face_step(self, face_image, profile, user, request=None):
         """Returns an error string if face verification fails, else None."""
-        from projdjango.recaptcha_utils import is_mobile_lan_dev_access
-
-        request = request or getattr(self, 'request', None)
-
-        if not face_verification_supported():
-            return None
-
-        stored_encoding = profile.get_face_encoding()
         if not face_image:
-            if (
-                request
-                and is_mobile_lan_dev_access(request)
-                and not getattr(settings, 'FACE_ENFORCE_ON_LAN', False)
-            ):
-                return None
-            return 'Face verification is required. On mobile over Wi-Fi, use HTTPS or tap Login without face if enabled.'
+            return (
+                'Face verification is required. Please capture your face using the camera before logging in.'
+            )
         image = decode_base64_image(face_image)
         if image is None:
             return 'Invalid face image. Please try again.'
+        stored_encoding = profile.get_face_encoding()
         if stored_encoding is None:
             return 'Face data not found. Please contact support or re-register with face capture.'
         is_match, error = verify_face(stored_encoding, image)

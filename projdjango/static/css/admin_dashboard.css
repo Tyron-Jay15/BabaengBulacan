@@ -288,20 +288,40 @@ a.admin-stat-card:focus-visible {
     min-height: calc(100vh - 220px);
     min-height: calc(100dvh - 220px);
     padding-top: 0.5rem;
-    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
 }
 
 .user-dash .container-xl {
-    padding-bottom: 2rem;
+    padding-bottom: 4rem;
 }
 
 .user-dash .admin-section {
     margin-bottom: 1.5rem;
 }
 
+.user-dash-sidebar {
+    margin-bottom: 3rem;
+}
+
+.user-dash-sidebar .user-quick-card {
+    height: auto;
+}
+
+.user-dash-sidebar .user-quick-card:last-child {
+    margin-bottom: 0;
+}
+
 @media (max-width: 768px) {
     .user-dash {
-        padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
+        padding-bottom: calc(8rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .user-dash .container-xl {
+        padding-bottom: 5rem;
+    }
+
+    .user-dash-sidebar {
+        margin-bottom: 4rem;
     }
 }
 

@@ -19,8 +19,7 @@
 
         if (!window.isSecureContext) {
             message = 'Camera access requires a secure connection (HTTPS). '
-                + 'When testing over Wi-Fi (http://192.168.x.x), use Login without face below, '
-                + 'or deploy with HTTPS for full face login on mobile.';
+                + 'Face verification is required to log in — open this site with HTTPS to use your camera.';
         } else if (error && error.name === 'NotAllowedError') {
             message = 'Camera permission was denied. Allow camera access in your browser settings, then tap Start Camera again.';
         } else if (error && error.name === 'NotFoundError') {
@@ -127,22 +126,16 @@
         }
     }
 
-    function submitWithoutFace(form) {
+    function showFaceRequiredAlert() {
+        const message = 'Face verification is required. Tap Start Camera and capture your face before logging in.';
         if (typeof Swal !== 'undefined') {
             Swal.fire({
-                icon: 'info',
-                title: 'Continue without face?',
-                text: 'Residents should use face login when HTTPS is available.',
-                showCancelButton: true,
-                confirmButtonText: 'Continue login',
-                cancelButtonText: 'Cancel',
-            }).then(function (result) {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
+                icon: 'warning',
+                title: 'Face Verification Required',
+                text: message,
             });
         } else {
-            form.submit();
+            alert(message);
         }
     }
 
@@ -161,7 +154,6 @@
     function initLoginForm() {
         const startBtn = document.getElementById('startCamera');
         const captureBtn = document.getElementById('captureFace');
-        const skipFaceBtn = document.getElementById('skipFaceBtn');
         const form = document.getElementById('loginForm');
 
         if (startBtn) {
@@ -169,11 +161,6 @@
         }
         if (captureBtn) {
             captureBtn.addEventListener('click', captureFace);
-        }
-        if (skipFaceBtn) {
-            skipFaceBtn.addEventListener('click', function () {
-                submitWithoutFace(form);
-            });
         }
 
         if (!isSecureForCamera()) {
@@ -203,7 +190,7 @@
                 const faceImage = document.getElementById('faceImage').value;
                 if (!faceImage) {
                     e.preventDefault();
-                    submitWithoutFace(form);
+                    showFaceRequiredAlert();
                     return false;
                 }
             });

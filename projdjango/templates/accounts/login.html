@@ -59,7 +59,7 @@
                     <div class="alert alert-info small py-2 mb-3">
                         <i class="fas fa-mobile-alt me-1"></i>
                         <strong>Mobile Wi-Fi mode:</strong> reCAPTCHA is skipped on your phone’s LAN link.
-                        Use <strong>Login without face</strong> if the camera is blocked (HTTP).
+                        Face verification is still required — use HTTPS for camera access on mobile.
                     </div>
                     {% endif %}
 
@@ -87,7 +87,7 @@
                             </p>
                             <div id="camera-insecure-note" class="alert alert-warning small py-2 d-none mb-2">
                                 <i class="fas fa-lock me-1"></i>
-                                Camera is blocked on <code>http://</code> Wi-Fi links. Use the button below to log in with email and password only.
+                                Camera is blocked on <code>http://</code> links. Open this site with <strong>HTTPS</strong> to capture your face and log in.
                             </div>
 
                             <div class="text-center mb-2 face-video-wrap">
@@ -105,10 +105,6 @@
                                 </button>
                             </div>
 
-                            <button type="button" class="btn btn-outline-secondary w-100" id="skipFaceBtn">
-                                <i class="fas fa-sign-in-alt me-2"></i>Login without face
-                            </button>
-
                             <input type="hidden" id="faceImage" name="face_image">
                             <div id="faceCaptured" class="alert alert-success small mt-2 mb-0 d-none">
                                 <i class="fas fa-check-circle me-2"></i>Face captured — you can log in now.
@@ -119,7 +115,7 @@
                             <input type="checkbox" class="form-check-input" id="remember" name="remember">
                             <label class="form-check-label" for="remember">Remember me</label>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3" id="loginBtn">
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3" id="loginBtn" disabled>
                             <i class="fas fa-sign-in-alt me-2"></i>Login
                         </button>
                     </form>
