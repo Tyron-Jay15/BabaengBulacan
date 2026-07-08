@@ -285,8 +285,24 @@ a.admin-stat-card:focus-visible {
 /* User dashboard */
 .user-dash {
     background: #f8f6fb;
-    min-height: 70vh;
-    padding-bottom: 3rem;
+    min-height: calc(100vh - 220px);
+    min-height: calc(100dvh - 220px);
+    padding-top: 0.5rem;
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+}
+
+.user-dash .container-xl {
+    padding-bottom: 2rem;
+}
+
+.user-dash .admin-section {
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .user-dash {
+        padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
+    }
 }
 
 .user-welcome-card {
